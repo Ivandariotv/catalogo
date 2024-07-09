@@ -25,7 +25,7 @@ class Product extends Model
         "Image",
         "Make",
         "Provider",
-        // "Units",
+        "Units",
         "Units_Pack",
         "Price",
         "Price_Cost",
@@ -111,8 +111,8 @@ class Product extends Model
                     0.00 AS Current_Price,
                     $ProductTable.Id,
                     if(
-                        COALESCE(`Image`, '') = '', 
-                        NULL, 
+                        COALESCE(`Image`, '') = '',
+                        NULL,
                         CONCAT('" . env('ASSETS_GESADMIN') . "', '/Items/', `Image`)
                     ) AS  `UrlImage`"
                 );
@@ -138,7 +138,7 @@ class Product extends Model
                             "
                         );
                         break;
-                    
+
                     case 'Unauthenticated':
                         return $this->selectRaw(
                             "'0.000' AS Units"
@@ -147,9 +147,20 @@ class Product extends Model
                 }
             }
 
-            public function addUnitsCarNoLogin(): Builder
+            public function addUnitsGesadmin(): Builder
             {
-                
+                $SerialTable = '001_droi_p1_t2_inventory_serial';
+                $ProductTable = '001_droi_p1_t1_inventory_sele';
+
+                $subquery = "(
+                    SELECT COUNT(*)
+                    FROM $SerialTable
+                    WHERE Code_Item = $ProductTable.Id AND State = 'Storage'
+                )";
+
+                return $this->selectRaw(
+                    "IFNULL($subquery, 0) AS UnitsGesadmin"
+                );
             }
         };
     }

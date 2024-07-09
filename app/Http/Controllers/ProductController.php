@@ -27,7 +27,7 @@ class ProductController extends Controller
      * @return Illuminate\Pagination\LengthAwarePaginator Devuelve una lista paginada de productos.
      */
 
-    public function indexByCategory( Request $request, $idCategory)//: LengthAwarePaginator
+    public function indexByCategory(Request $request, $idCategory) //: LengthAwarePaginator
     {
         // Validar el parámetro de entrada
         $validator = $this->validator([
@@ -47,8 +47,8 @@ class ProductController extends Controller
         // Verificar la autenticación del usuario a través del token
         $user = $this->isAuthenticated($token);
         // El token no es válido, maneja el error o la respuesta correspondiente
-        if($user['state'] == "Unauthorized") return response()->json([ 
-            "message" => $user['state']."."
+        if ($user['state'] == "Unauthorized") return response()->json([
+            "message" => $user['state'] . "."
         ]);
         // Obtener la lista de productos que cumplen con los criterios
         $Product = $this->getProducts($config, $user, "rules:general", "idCategory:$idCategory");
@@ -57,13 +57,13 @@ class ProductController extends Controller
     }
 
     /**
-    * Muestra una lista de productos que coinciden con una palabra clave dada.
-    *
-    * @param string $keyword La palabra clave para buscar productos.
-    * @return Illuminate\Pagination\LengthAwarePaginator Devuelve una lista paginada de productos.
-    */
+     * Muestra una lista de productos que coinciden con una palabra clave dada.
+     *
+     * @param string $keyword La palabra clave para buscar productos.
+     * @return Illuminate\Pagination\LengthAwarePaginator Devuelve una lista paginada de productos.
+     */
 
-    public function indexByKeyword(Request $request, $keyword)//: LengthAwarePaginator
+    public function indexByKeyword(Request $request, $keyword) //: LengthAwarePaginator
     {
         // Validar el parámetro de entrada
         $validator = $this->validator([
@@ -83,8 +83,8 @@ class ProductController extends Controller
         // Verificar la autenticación del usuario a través del token
         $user = $this->isAuthenticated($token);
         // El token no es válido, maneja el error o la respuesta correspondiente
-        if($user['state'] == "Unauthorized") return response()->json([ 
-            "message" => $user['state']."."
+        if ($user['state'] == "Unauthorized") return response()->json([
+            "message" => $user['state'] . "."
         ]);
         // Obtener la lista de productos que cumplen con los criterios
         $Product = $this->getProducts($config, $user, "rules:general", "keyword:$keyword");
@@ -119,22 +119,26 @@ class ProductController extends Controller
         // Verificar la autenticación del usuario a través del token
         $user = $this->isAuthenticated($token);
         // El token no es válido, maneja el error o la respuesta correspondiente
-        if($user['state'] == "Unauthorized") return response()->json([ 
-            "message" => $user['state']."."
+        if ($user['state'] == "Unauthorized") return response()->json([
+            "message" => $user['state'] . "."
         ]);
-        
+
         $recommendProduct = $this->getRecommendProducts($config, $user, "idProduct:$idProduct", "nItems:1");
 
         if ($recommendProduct->isEmpty()) {
             $Product = $this->getProducts($config, $user, "rules:general", "nItems:1", "order:rand");
-            foreach ($Product as $value) { $value->randon = true; }
+            foreach ($Product as $value) {
+                $value->randon = true;
+            }
 
             return BillDiscounts::getCurrentPrice($Product);
         }
 
         $idsProducts = $recommendProduct->pluck('Id');
         $Product = $this->getProducts($config, $user, "productsIDs:$idsProducts");
-        foreach ($Product as $value) { $value->randon = false; }
+        foreach ($Product as $value) {
+            $value->randon = false;
+        }
 
         return BillDiscounts::getCurrentPrice($Product);
     }
@@ -154,25 +158,31 @@ class ProductController extends Controller
         // Verificar la autenticación del usuario a través del token
         $user = $this->isAuthenticated($token);
         // El token no es válido, maneja el error o la respuesta correspondiente
-        if($user['state'] == "Unauthorized") return response()->json([ 
-            "message" => $user['state']."."
+        if ($user['state'] == "Unauthorized") return response()->json([
+            "message" => $user['state'] . "."
         ]);
-        
+
         $recommendProduct = $this->getRecommendProducts($config, $user, "nItems:2");
 
         if ($recommendProduct->isEmpty()) {
             $Product = $this->getProducts($config, $user, "rules:general", "nItems:2", "order:rand");
-            foreach ($Product as $value) { $value->randon = true; }
+            foreach ($Product as $value) {
+                $value->randon = true;
+            }
 
             return BillDiscounts::getCurrentPrice($Product);
-        }elseif ($recommendProduct->count() === 1) {
+        } elseif ($recommendProduct->count() === 1) {
             $ProductRandon = $this->getProducts($config, $user, "rules:general", "nItems:1", "order:rand");
-            foreach ($ProductRandon as $value) { $value->randon = true; }
+            foreach ($ProductRandon as $value) {
+                $value->randon = true;
+            }
 
             $idsProducts = $recommendProduct->pluck('Id');
             $Product = $this->getProducts($config, $user, "productsIDs:$idsProducts");
-            foreach ($Product as $value) { $value->randon = false; }
-            
+            foreach ($Product as $value) {
+                $value->randon = false;
+            }
+
             $Products2 = $Product->merge($ProductRandon);
 
             return BillDiscounts::getCurrentPrice($Products2);
@@ -180,7 +190,9 @@ class ProductController extends Controller
 
         $idsProducts = $recommendProduct->pluck('Id');
         $Product = $this->getProducts($config, $user, "productsIDs:$idsProducts");
-        foreach ($Product as $value) { $value->randon = false; }
+        foreach ($Product as $value) {
+            $value->randon = false;
+        }
 
         return BillDiscounts::getCurrentPrice($Product);
     }
@@ -252,7 +264,7 @@ class ProductController extends Controller
     private function isAuthenticated($token)
     {
         // ["authenticated.","Unauthenticated.","Unauthorized"]
-        if ($token){
+        if ($token) {
             $user = Auth::guard('sanctum')->user();
             // El token no es válido
             if (!$user) return [
@@ -277,10 +289,9 @@ class ProductController extends Controller
      * @param string ...$otherParams Otros parámetros para filtrar y ordenar productos.
      * @return Illuminate\Database\Eloquent\Collection La lista de productos.
      */
-    private function getProducts($config, $user, ...$otherParams) 
+    private function getProducts($config, $user, ...$otherParams)
     {
-        foreach ($otherParams as $otherParam) 
-        {
+        foreach ($otherParams as $otherParam) {
             $nameVar = explode(':', $otherParam)[0];
             if ($nameVar == "idCategory") $$nameVar = explode(':', $otherParam)[1];
             if ($nameVar == "keyword") $$nameVar = explode(':', $otherParam)[1];
@@ -294,51 +305,45 @@ class ProductController extends Controller
         $ProductTable = '001_droi_p1_t1_inventory_sele';
 
         $Product = Product::addUrlImage()
-            ->addUnitsCar($config->Id, $user);
-            
+            ->addUnitsGesadmin();
+
         if (isset($rules) && $rules == "general") $Product = $Product->join(
-            $WarehouseProductTable, 
-            $ProductTable . '.Id', 
+            $WarehouseProductTable,
+            $ProductTable . '.Id',
             $WarehouseProductTable . '.Id_Inventory'
         );
         if (isset($idCategory)) $Product = $Product->where($ProductTable . '.Code_Group', $idCategory);
         if (isset($keyword)) $Product = $Product->where('Product', 'LIKE', "%$keyword%");
         if (isset($productsIDs)) $Product = $Product->whereIn('Id', json_decode($productsIDs));
-            
-        if (isset($rules) && $rules == "general"){
+
+        if (isset($rules) && $rules == "general") {
             $Product = $Product->where($ProductTable . '.Price_App', '<>', 0)
                 ->where($WarehouseProductTable . '.Id_Warehouse', $config->Id_Warehouse)
                 ->where($WarehouseProductTable . '.State', 'Active')
                 ->where(function ($query) use ($config) {
-                    $query->where(function($query) use($config){
-                        $query->Where('001_droi_p1_t1_inventory_sele.Type', 'Recurrent')
-                            ->where(function($query) use($config){
-                                $query->selectRaw('
-                                    COALESCE(
-                                        SUM(
-                                            IF(Type = "Add", Unit, 0) - IF(Type = "Remove", Unit, 0)
-                                        ),
-                                        0
-                                    ) AS units
-                                ')
-                                    ->from('001_droi_p1_t1_inventory_sale_c2_products_history_units')
-                                    ->where('001_droi_p1_t1_inventory_sale_c2_products_history_units.Id_Warehouse', $config->Id_Warehouse)
-                                    ->whereRaw('001_droi_p1_t1_inventory_sale_c2_products_history_units.Code_Item = 001_droi_p1_t1_inventory_sele.Id');
-                                    ;
-                            }, '>', 0);
-
-
-
+                    $query->where(function ($query) use ($config) {
+                        $query->where('001_droi_p1_t1_inventory_sele.Type', 'Recurrent')
+                        ->where(function ($query) use ($config) {
+                            $query->selectRaw('
+                                COALESCE(
+                                    COUNT(*),
+                                    0
+                                ) AS units
+                            ')
+                                ->from('001_droi_p1_t2_inventory_serial')
+                                ->where('001_droi_p1_t2_inventory_serial.State', 'Storage')
+                                ->whereRaw('001_droi_p1_t2_inventory_serial.Code_Item = 001_droi_p1_t1_inventory_sele.Id');
+                        }, '>', 0);
                     })->orWhere('001_droi_p1_t1_inventory_sele.Type', '!=', 'Recurrent');
                 });
         }
-            
+
         if (isset($nItems)) $Product = $Product->limit($nItems);
         if (isset($order)) $Product = $Product->orderByRaw('RAND()');
 
-        $Product = (isset($nItems) || isset($productsIDs)) 
-            ? $Product->get() 
-            : $Product->paginate(10) ;
+        $Product = (isset($nItems) || isset($productsIDs))
+            ? $Product->get()
+            : $Product->paginate(10);
 
         return $Product;
     }
@@ -351,15 +356,14 @@ class ProductController extends Controller
      * @param string ...$otherParams Otros parámetros para filtrar y limitar productos recomendados.
      * @return Illuminate\Database\Eloquent\Collection La lista de productos recomendados.
      */
-    private function getRecommendProducts($config, $user, ...$otherParams) 
+    private function getRecommendProducts($config, $user, ...$otherParams)
     {
-        foreach ($otherParams as $otherParam) 
-        {
+        foreach ($otherParams as $otherParam) {
             $nameVar = explode(':', $otherParam)[0];
             if ($nameVar == "idProduct") $$nameVar = explode(':', $otherParam)[1];
             if ($nameVar == "nItems") $$nameVar = explode(':', $otherParam)[1];
         }
-        
+
         $BTable = "001_droi_p3_t1_bills";
         $BPTable = "001_droi_p3_t1_bills_c1_products";
         $PTable = '001_droi_p1_t1_inventory_sele';
@@ -367,13 +371,13 @@ class ProductController extends Controller
         $recommendProduct = Bills::addColumnsrecommend($PTable)
             ->join($BPTable, "$BTable.Id", "=", "$BPTable.Id_Bill")
             ->join($PTable, "$BPTable.Code_Product", '=', "$PTable.Id")
-            
+
             ->where($PTable . '.Price_App', '<>', 0)
 
             ->where(function ($query) use ($config) {
-                $query->where(function($query) use($config){
+                $query->where(function ($query) use ($config) {
                     $query->Where('001_droi_p1_t1_inventory_sele.Type', 'Recurrent')
-                        ->where(function($query) use($config){
+                        ->where(function ($query) use ($config) {
                             $query->selectRaw('
                                 COALESCE(
                                     SUM(
@@ -384,33 +388,30 @@ class ProductController extends Controller
                             ')
                                 ->from('001_droi_p1_t1_inventory_sale_c2_products_history_units')
                                 ->where('001_droi_p1_t1_inventory_sale_c2_products_history_units.Id_Warehouse', $config->Id_Warehouse)
-                                ->whereRaw('001_droi_p1_t1_inventory_sale_c2_products_history_units.Code_Item = 001_droi_p1_t1_inventory_sele.Id');
-                                ;
+                                ->whereRaw('001_droi_p1_t1_inventory_sale_c2_products_history_units.Code_Item = 001_droi_p1_t1_inventory_sele.Id');;
                         }, '>', 0);
                 })->orWhere('001_droi_p1_t1_inventory_sele.Type', '!=', 'Recurrent');
             });
 
-            if (isset($idProduct)) 
-            {
-                $recommendProduct = $recommendProduct->whereIn(
-                    "$BTable.Id", 
-                    function ($query) use ($idProduct, $BPTable) 
-                    {
-                        $query->select('Id_Bill')
-                            ->from($BPTable)
-                            ->where('Code_Product', $idProduct);
-                    }
-                )->where("$PTable.Id", "<>", $idProduct);
-            }
+        if (isset($idProduct)) {
+            $recommendProduct = $recommendProduct->whereIn(
+                "$BTable.Id",
+                function ($query) use ($idProduct, $BPTable) {
+                    $query->select('Id_Bill')
+                        ->from($BPTable)
+                        ->where('Code_Product', $idProduct);
+                }
+            )->where("$PTable.Id", "<>", $idProduct);
+        }
 
-            if ($user['state'] == 'authenticated') {
-                $recommendProduct = $recommendProduct->where('Code_Client', $user['data']->Id);
-            }
+        if ($user['state'] == 'authenticated') {
+            $recommendProduct = $recommendProduct->where('Code_Client', $user['data']->Id);
+        }
 
-            $recommendProduct = $recommendProduct->groupBy("$PTable.Product", "$PTable.Id")
-                ->orderByDesc('total_compras')
-                ->limit($nItems)
-                ->get();
+        $recommendProduct = $recommendProduct->groupBy("$PTable.Product", "$PTable.Id")
+            ->orderByDesc('total_compras')
+            ->limit($nItems)
+            ->get();
 
         return $recommendProduct;
     }
