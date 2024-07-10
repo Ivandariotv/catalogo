@@ -40,6 +40,7 @@ Route::get('applicationSettings', [ApplicationSettingsController::class, 'index'
 Route::get('Banners', [BannerController::class, 'index']);
 Route::get('Categories', [CategoryController::class, 'index']);
 Route::get('Subcategories/{idCategory}', [CategoryController::class, 'showSubcategory']);
+Route::get('Products', [ProductController::class, 'index']);
 Route::get('Products/Category/{idCategory}', [ProductController::class, 'indexByCategory']);
 Route::get('Products/Search/{keyword}', [ProductController::class, 'indexByKeyword']);
 Route::get('RecommendProduct/{idProduct}', [ProductController::class, 'recommendProduct']);

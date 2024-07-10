@@ -21,6 +21,36 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class ProductController extends Controller
 {
     /**
+     * Muestra una lista de productos home.
+     *
+     * @param int $idCategory El ID de la categoría por la cual filtrar los productos.
+     * @return Illuminate\Pagination\LengthAwarePaginator Devuelve una lista paginada de productos.
+     */
+
+     public function index(Request $request) //: LengthAwarePaginator
+     {
+         // Obtener la configuración del negocio
+         $config = $this->getConfig();
+
+         // Obtener el token de autenticación de la solicitud
+         $token = $request->bearerToken();
+
+         // Verificar la autenticación del usuario a través del token
+         $user = $this->isAuthenticated($token);
+
+         // El token no es válido, maneja el error o la respuesta correspondiente
+         if ($user['state'] == "Unauthorized") return response()->json([
+             "message" => $user['state'] . "."
+         ]);
+
+         // Obtener la lista de productos que cumplen con los criterios
+         $Product = $this->getProducts($config, $user, "rules:general");
+
+         // Aplicar descuentos y devolver la lista paginada de productos
+         return BillDiscounts::getCurrentPrice($Product);
+     }
+
+    /**
      * Muestra una lista de productos por categoría.
      *
      * @param int $idCategory El ID de la categoría por la cual filtrar los productos.
@@ -72,22 +102,29 @@ class ProductController extends Controller
                 'rules' => 'required|string'
             ]
         ]);
+
         // Comprobar si la validación falla y devolver errores si es así
         if ($validator->fails()) return response()->json([
             'error' => $validator->errors()
         ], 400);
+
         // Obtener la configuración del negocio
         $config = $this->getConfig();
+
         // Obtener el token de autenticación de la solicitud
         $token = $request->bearerToken();
+
         // Verificar la autenticación del usuario a través del token
         $user = $this->isAuthenticated($token);
+
         // El token no es válido, maneja el error o la respuesta correspondiente
         if ($user['state'] == "Unauthorized") return response()->json([
             "message" => $user['state'] . "."
         ]);
+
         // Obtener la lista de productos que cumplen con los criterios
         $Product = $this->getProducts($config, $user, "rules:general", "keyword:$keyword");
+
         // Aplicar descuentos y devolver la lista paginada de productos
         return BillDiscounts::getCurrentPrice($Product);
     }
