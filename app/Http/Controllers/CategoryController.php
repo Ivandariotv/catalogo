@@ -19,7 +19,8 @@ class CategoryController extends Controller
             ->hasSubcategory()
             ->where('Id_Parent', 0)
             ->orWhereNull('Id_Parent')
-            ->paginate(10);
+            ->orderBy('Display_Order', 'asc')
+            ->paginate(100);
 
         return $Categories;
     }
