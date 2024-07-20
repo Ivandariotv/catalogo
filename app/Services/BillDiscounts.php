@@ -10,13 +10,11 @@ class BillDiscounts
     public static function getCurrentPrice($products)
     {
         $discounts = BillDiscounts::getDiscounts();
-        
-        // return $discounts;
+
         $idGroups = array_column($discounts["group"]->toArray(), 'Type_Value');
         $idItems = array_column($discounts["item"]->toArray(), 'Type_Value');
- 
-        foreach ($products as $product){
 
+        foreach ($products as $product) {
             $IndexDiscByGroup = array_search($product['Code_Group'], $idGroups);
             $IndexDiscByItem = array_search($product['Id'], $idItems);
 
@@ -27,13 +25,14 @@ class BillDiscounts
             $applyDiscountToAll = $hasDiscToAll && !$hasDiscByGroup && !$hasDiscByItem;
             $ApplyDiscountByGroup = $hasDiscByGroup && !$hasDiscByItem;
 
+            $discountToApply = null;
             if ($applyDiscountToAll) $discountToApply = $discounts["all"][0];
             elseif ($ApplyDiscountByGroup) $discountToApply = $discounts["group"][$IndexDiscByGroup];
             elseif ($hasDiscByItem) $discountToApply = $discounts["item"][$IndexDiscByItem];
 
-            $product->Current_Price = (isset($discountToApply) && !is_null($discountToApply)) 
-                ? BillDiscounts::calculateCurrentPrice($product, $discountToApply) 
-                : $product->Previous_Price;            
+            $product->Current_Price = (isset($discountToApply) && !is_null($discountToApply))
+                ? BillDiscounts::calculateCurrentPrice($product, $discountToApply)
+                : $product->Previous_Price;
         }
 
         return $products;
@@ -79,17 +78,17 @@ class BillDiscounts
                 case 'personalized':
                     $currentDate = Carbon::now();
                     $dayOfWeekNumeric = $currentDate->dayOfWeek;
-                    $daysDiscount = json_decode("[".$Discount->Repeat_Value."]");
+                    $daysDiscount = json_decode("[" . $Discount->Repeat_Value . "]");
                     $hasDicountToday = array_search($dayOfWeekNumeric, $daysDiscount);
 
                     if ($hasDicountToday == false) array_push($excludedIds, $Discount->Id);
                     break;
             }
         }
-        
+
         $filteredDiscounts = $Discounts->except($excludedIds);
-        
-       return $filteredDiscounts;
+
+        return $filteredDiscounts;
     }
 
     private static function calculateCurrentPrice($product, $discountsItem)
@@ -99,14 +98,20 @@ class BillDiscounts
                 $discountPercentage = $discountsItem['Discount_Value_1'];
                 $discountAmount  = intval($product->Previous_Price) * ($discountPercentage / 100);
                 $Current_Price = number_format(
-                    intval($product->Previous_Price) - $discountAmount, 3,  '.', ''
-                ) ;
+                    intval($product->Previous_Price) - $discountAmount,
+                    3,
+                    '.',
+                    ''
+                );
                 break;
             case 'value':
                 $discountAmount  = intval($discountsItem['Discount_Value_1']);
                 $Current_Price = number_format(
-                    intval($product->Previous_Price) - $discountAmount, 3, '.', ''
-                ) ;
+                    intval($product->Previous_Price) - $discountAmount,
+                    3,
+                    '.',
+                    ''
+                );
                 break;
         }
 
@@ -134,9 +139,9 @@ class BillDiscounts
         elseif ($ApplyDiscountByGroup) $discountToApply = $discounts["group"][$IndexDiscByGroup];
         elseif ($hasDiscByItem) $discountToApply = $discounts["item"][$IndexDiscByItem];
 
-        $product->Current_Price = (isset($discountToApply) && !is_null($discountToApply)) 
-                ? BillDiscounts::calculateCurrentPrice($product, $discountToApply) 
-                : $product->Previous_Price;
+        $product->Current_Price = (isset($discountToApply) && !is_null($discountToApply))
+            ? BillDiscounts::calculateCurrentPrice($product, $discountToApply)
+            : $product->Previous_Price;
 
         return $product->Previous_Price - $product->Current_Price;
     }

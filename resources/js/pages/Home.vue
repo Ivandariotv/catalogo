@@ -9,62 +9,16 @@ onMounted(() => {
     inventoryStore.getProducts();
 });
 
-const products = [
-    {
-        id: 1,
-        name: 'Basic Tee',
-        href: '#',
-        imageSrc: 'https://aguamarinaoficial.com/cdn/shop/files/2_262433ce-998c-44ea-a06c-5989c0529a0f.png?v=1707940016',
-        imageAlt: "Front of men's Basic Tee in black.",
-        price: '$35',
-        color: 'Black',
-    },
-    {
-        id: 1,
-        name: 'Basic Tee',
-        href: '#',
-        imageSrc: 'https://aguamarinaoficial.com/cdn/shop/files/8FEB16730copia.jpg?v=1707940987',
-        imageAlt: "Front of men's Basic Tee in black.",
-        price: '$35',
-        color: 'Black',
-    },
-    {
-        id: 1,
-        name: 'Basic Tee',
-        href: '#',
-        imageSrc: 'https://aguamarinaoficial.com/cdn/shop/files/AGUAMARINA14924copia.jpg?v=1708115260',
-        imageAlt: "Front of men's Basic Tee in black.",
-        price: '$35',
-        color: 'Black',
-    },
-    {
-        id: 1,
-        name: 'Basic Tee',
-        href: '#',
-        imageSrc: 'https://aguamarinaoficial.com/cdn/shop/files/8FEB16844copia.jpg?v=1708012912',
-        imageAlt: "Front of men's Basic Tee in black.",
-        price: '$35',
-        color: 'Black',
-    },
-    {
-        id: 1,
-        name: 'Basic Tee',
-        href: '#',
-        imageSrc: 'https://aguamarinaoficial.com/cdn/shop/files/F004FX-3.jpg?v=1708369830',
-        imageAlt: "Front of men's Basic Tee in black.",
-        price: '$35',
-        color: 'Black',
-    },
-    {
-        id: 1,
-        name: 'Body Con Transparencias Y Encaje',
-        href: '#',
-        imageSrc: 'https://aguamarinaoficial.com/cdn/shop/files/AGUAMARINA15190copia.jpg?v=1720556545',
-        imageAlt: "Front of men's Basic Tee in black.",
-        price: '$ 31.000',
-        color: 'Black',
-    },
-]
+function formatCurrency(value) {
+    const numberValue = Number(value);
+    if (isNaN(numberValue)) {
+        return value; // Mantener el valor sin formatear si no es un número válido
+    }
+    return new Intl.NumberFormat('es-CO', {
+        style: 'currency', currency: 'COP', minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    }).format(numberValue);
+}
 </script>
 
 <template>
@@ -72,8 +26,10 @@ const products = [
         <div v-for="product in inventoryStore.products.data" :key="product.id" class="group relative">
             <div
                 class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
-                <img :src="`https://${product.UrlImage}`" :alt="product.Product"
-                    class="h-full w-full object-cover object-center lg:h-full lg:w-full" />
+                <img :src="product.UrlImage ?? '/storage/default.jpg'" :alt="product.Product"
+                    class="h-full w-full object-cover object-center lg:h-full lg:w-full" onerror="
+                        if (this.src != '/storage/default.jpg') this.src = '/storage/default.jpg';
+                    " />
             </div>
             <div class="mt-4 flex justify-between">
                 <div>
@@ -85,7 +41,10 @@ const products = [
                     </h3>
                     <p class="mt-1 text-sm text-gray-500">{{ product.Description }}</p>
                 </div>
-                <p class="text-sm font-medium text-gray-900">{{ product.Current_Price }}</p>
+                <div class="grid justify-items-end">
+                    <p class="text-xs text-gray-400 line-through" v-if="product.Current_Price != product.Previous_Price"> {{ formatCurrency(product.Previous_Price) }}</p>
+                    <p class="text-sm font-bold text-gray-900">{{ formatCurrency(product.Current_Price) }}</p>
+                </div>
             </div>
         </div>
     </div>

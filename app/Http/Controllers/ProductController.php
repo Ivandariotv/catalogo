@@ -27,28 +27,28 @@ class ProductController extends Controller
      * @return Illuminate\Pagination\LengthAwarePaginator Devuelve una lista paginada de productos.
      */
 
-     public function index(Request $request) //: LengthAwarePaginator
-     {
-         // Obtener la configuración del negocio
-         $config = $this->getConfig();
+    public function index(Request $request) //: LengthAwarePaginator
+    {
+        // Obtener la configuración del negocio
+        $config = $this->getConfig();
 
-         // Obtener el token de autenticación de la solicitud
-         $token = $request->bearerToken();
+        // Obtener el token de autenticación de la solicitud
+        $token = $request->bearerToken();
 
-         // Verificar la autenticación del usuario a través del token
-         $user = $this->isAuthenticated($token);
+        // Verificar la autenticación del usuario a través del token
+        $user = $this->isAuthenticated($token);
 
-         // El token no es válido, maneja el error o la respuesta correspondiente
-         if ($user['state'] == "Unauthorized") return response()->json([
-             "message" => $user['state'] . "."
-         ]);
+        // El token no es válido, maneja el error o la respuesta correspondiente
+        if ($user['state'] == "Unauthorized") return response()->json([
+            "message" => $user['state'] . "."
+        ]);
 
-         // Obtener la lista de productos que cumplen con los criterios
-         $Product = $this->getProducts($config, $user, "rules:general");
+        // Obtener la lista de productos que cumplen con los criterios
+        $Product = $this->getProducts($config, $user, "rules:general");
 
-         // Aplicar descuentos y devolver la lista paginada de productos
-         return BillDiscounts::getCurrentPrice($Product);
-     }
+        // Aplicar descuentos y devolver la lista paginada de productos
+        return BillDiscounts::getCurrentPrice($Product);
+    }
 
     /**
      * Muestra una lista de productos por categoría.
@@ -360,17 +360,17 @@ class ProductController extends Controller
                 ->where(function ($query) use ($config) {
                     $query->where(function ($query) use ($config) {
                         $query->where('001_droi_p1_t1_inventory_sele.Type', 'Recurrent')
-                        ->where(function ($query) use ($config) {
-                            $query->selectRaw('
+                            ->where(function ($query) use ($config) {
+                                $query->selectRaw('
                                 COALESCE(
                                     COUNT(*),
                                     0
                                 ) AS units
                             ')
-                                ->from('001_droi_p1_t2_inventory_serial')
-                                ->where('001_droi_p1_t2_inventory_serial.State', 'Storage')
-                                ->whereRaw('001_droi_p1_t2_inventory_serial.Code_Item = 001_droi_p1_t1_inventory_sele.Id');
-                        }, '>', 0);
+                                    ->from('001_droi_p1_t2_inventory_serial')
+                                    ->where('001_droi_p1_t2_inventory_serial.State', 'Storage')
+                                    ->whereRaw('001_droi_p1_t2_inventory_serial.Code_Item = 001_droi_p1_t1_inventory_sele.Id');
+                            }, '>', 0);
                     })->orWhere('001_droi_p1_t1_inventory_sele.Type', '!=', 'Recurrent');
                 });
         }
@@ -380,7 +380,7 @@ class ProductController extends Controller
 
         $Product = (isset($nItems) || isset($productsIDs))
             ? $Product->get()
-            : $Product->paginate(10);
+            : $Product->paginate(20);
 
         return $Product;
     }
