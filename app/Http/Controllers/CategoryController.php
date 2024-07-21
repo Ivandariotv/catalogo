@@ -20,7 +20,7 @@ class CategoryController extends Controller
             ->where('Id_Parent', 0)
             ->orWhereNull('Id_Parent')
             ->orderBy('Display_Order', 'asc')
-            ->paginate(100);
+            ->get();
 
         return $Categories;
     }

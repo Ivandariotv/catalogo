@@ -2,13 +2,53 @@
 import { Disclosure } from '@headlessui/vue'
 import { MagnifyingGlassIcon, ShoppingCartIcon } from '@heroicons/vue/24/outline'
 import { useInventoryStore } from "../stores/Inventory.js";
-import { onMounted } from "vue";
+import { onMounted, onBeforeMount, ref, reactive } from "vue";
 
 const inventoryStore = useInventoryStore();
 
+const scrollContainer = ref(null);
+const state = reactive({
+    atStart: true,
+    atEnd: true,
+});
+
+function getImage(UrlImage) {
+    if (UrlImage) {
+        return UrlImage;
+    } else {
+        return '/storage/menu_all.jpg'
+    }
+}
+
+const scrollLeft = () => {
+    if (scrollContainer.value) {
+        scrollContainer.value.scrollBy({ left: -200, behavior: 'smooth' });
+    }
+};
+
+const scrollRight = () => {
+    if (scrollContainer.value) {
+        scrollContainer.value.scrollBy({ left: 200, behavior: 'smooth' });
+    }
+};
+
+const updateScrollState = () => {
+    if (scrollContainer.value) {
+        state.atStart = scrollContainer.value.scrollLeft === 0;
+        state.atEnd = scrollContainer.value.scrollLeft + scrollContainer.value.clientWidth >= scrollContainer.value.scrollWidth;
+    }
+};
+
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 // carga el contenido de la pagina
-onMounted(() => {
-    inventoryStore.getCategories();
+onMounted(async () => {
+    try {
+        // Espera a que getCategories termine de ejecutarse
+        await inventoryStore.getCategories();
+        await sleep(1000);
+        updateScrollState();
+    } catch (error) { }
 });
 </script>
 
@@ -19,9 +59,7 @@ onMounted(() => {
                 <div class="flex h-16 items-center justify-between">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
-                            <img class="h-16 w-16"
-                                src="/storage/logo.png"
-                                alt="Your Company" />
+                            <img class="h-16 w-16" src="/storage/logo.png" alt="Your Company" />
                         </div>
                     </div>
                     <div>
@@ -38,19 +76,46 @@ onMounted(() => {
             </div>
         </Disclosure>
 
-        <header class="bg-white ">
-            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex gap-6 overflow-hidden overflow-x-auto custom-scroll">
-                <div class="w-20">
-                    <div class="bg-cover w-20 h-20 bg-center overflow-hidden rounded-full"
+        <header class="bg-white mx-auto max-w-7xl relative">
+            <!-- Botones de navegación -->
+            <div
+                class="absolute left-0 bg-gradient-to-r from-white from-20% lg:from-50% to-transparent to-60% lg:to-60% pl-2 sm:pl-3 lg:pl-4 h-full flex items-center">
+                <button @click="scrollLeft"
+                    class="w-6 h-6 px-[7.5px] text-white bg-gray-600 hover:bg-gray-800 ring-0 focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full text-sm text-center inline-flex items-center me-2 transition duration-200 ease-in-out"
+                    :style="{ opacity: state.atStart ? '0' : '100' }" :disabled="state.atStart">
+                    &#10094;
+                </button>
+            </div>
+
+            <div
+                class="absolute right-0 bg-gradient-to-r from-transparent from-40% lg:from-20% to-white to-80% lg:to-50% pr-2 sm:pr-3 lg:pr-4 h-full flex items-center">
+                <button @click="scrollRight"
+                    class="w-6 h-6 px-[9px] text-white bg-gray-600 hover:bg-gray-800 ring-0 focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full text-sm text-center inline-flex items-center me-2 transition duration-200 ease-in-out"
+                    :style="{ opacity: state.atEnd ? '0' : '100' }" :disabled="state.atEnd">
+                    &#10095;
+                </button>
+            </div>
+
+            <div ref="scrollContainer"
+                class="scroll-pl-4 mx-1 sm:scroll-pl-6 lg:scroll-pl-8 mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 mx-auto max-w-7xl py-6 flex gap-4 sm:gap-6 lg:gap-8 overflow-hidden overflow-x-auto snap-x"
+                @scroll="updateScrollState" style="scrollbar-width: none;">
+                <div
+                    class="cursor-pointer text-gray-400 hover:text-gray-950 font-semibold hover:font-bold group snap-start transition duration-200 ease-in-out">
+                    <div class="bg-cover w-20 h-20 bg-center overflow-hidden rounded-full border-2 group-hover:border-[#00BBFF] transition duration-200 ease-in-out"
                         :style='{ backgroundImage: `url(/storage/menu_all.jpg)` }'>
                     </div>
-                    <p class="font-semibold text-sm text-center pt-2 line-clamp-2">Todo</p>
+                    <p class="w-20 font-medium text-sm text-center pt-2 line-clamp-2">Todo</p>
                 </div>
-                <div class="w-20" v-for="(category, index) in inventoryStore.categories.data" :key="index">
-                    <div class="bg-cover w-20 h-20 bg-center overflow-hidden rounded-full"
-                        :style='{ backgroundImage: `url(${category.UrlImage})` }'>
+                <div class="cursor-pointer text-gray-400 hover:text-gray-950 font-semibold hover:font-bold group snap-start transition duration-200 ease-in-out"
+                    v-for="(category, index) in inventoryStore.categories" :key="index">
+                    <div
+                        class="bg-cover w-20 h-20 bg-center overflow-hidden rounded-full border-2 group-hover:border-[#00BBFF] transition duration-200 ease-in-out">
+                        <img :src="category.UrlImage ?? '/storage/menu_all.jpg'" :alt="category.Name"
+                            class="h-full w-full object-cover object-center" onerror="
+                            if (this.src != '/storage/menu_all.jpg') this.src = '/storage/menu_all.jpg';
+                        " />
                     </div>
-                    <p class="font-semibold text-sm text-center pt-2 line-clamp-2">{{ category.Name }}</p>
+                    <p class="w-20 font-medium text-sm text-center pt-2 line-clamp-2">{{ category.Name }}</p>
                 </div>
             </div>
         </header>
