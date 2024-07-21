@@ -6,7 +6,8 @@ export const useInventoryStore = defineStore("inventory", {
     state: () => ({
         loadingProducts: true,
         categories: {},
-        products: {}
+        products: {},
+        nextProductPageURL: null,
     }),
 
     getters: {},
@@ -14,14 +15,11 @@ export const useInventoryStore = defineStore("inventory", {
     actions: {
         /** Obtiene las categorias */
         async getCategories() {
-            this.loadingProducts = true;
-
             axios({
                 method: "get",
                 url: "/api/Categories?page=1",
             }).then(({ data }) => {
                 this.categories = data;
-                this.loadingProducts = false;
             });
         },
 
@@ -31,9 +29,27 @@ export const useInventoryStore = defineStore("inventory", {
 
             axios({
                 method: "get",
-                url: "/api/Products?page=1",
+                url: "/api/Products?order=desc",
+                params: {
+                    order: 'desc'
+                }
             }).then(({ data }) => {
-                this.products = data;
+                this.products = data.data;
+                this.nextProductPageURL = data.next_page_url;
+                this.loadingProducts = false;
+            });
+        },
+
+        /** Obtiene más productos y los agrega al array */
+        async getMoreProducts() {
+            this.loadingProducts = true;
+
+            axios({
+                method: "get",
+                url: this.nextProductPageURL,
+            }).then(({ data }) => {
+                this.products = [...this.products, ...data.data];
+                this.nextProductPageURL = data.next_page_url;
                 this.loadingProducts = false;
             });
         },

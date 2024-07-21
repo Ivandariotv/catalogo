@@ -380,7 +380,7 @@ class ProductController extends Controller
 
         $Product = (isset($nItems) || isset($productsIDs))
             ? $Product->get()
-            : $Product->paginate(20);
+            : $Product->orderByDesc('001_droi_p1_t1_inventory_sele.Id')->paginate(40);
 
         return $Product;
     }
