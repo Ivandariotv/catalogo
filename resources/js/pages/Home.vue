@@ -1,12 +1,21 @@
 <script setup>
 import { useInventoryStore } from "../stores/Inventory.js";
-import { onMounted } from "vue";
+import { useRouter } from 'vue-router';
+import { onMounted, ref, defineProps } from "vue";
 
 const inventoryStore = useInventoryStore();
+const route = useRouter();
+
+const props = defineProps({
+  categoryId: {
+    type: [String, Number],
+    required: false
+  }
+});
 
 // carga el contenido de la pagina
 onMounted(() => {
-    inventoryStore.getProducts();
+    inventoryStore.getProducts(props.categoryId);
 });
 
 function formatCurrency(value) {

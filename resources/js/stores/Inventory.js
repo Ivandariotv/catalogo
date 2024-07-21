@@ -8,6 +8,7 @@ export const useInventoryStore = defineStore("inventory", {
         categories: {},
         products: {},
         nextProductPageURL: null,
+        selectedCategory: null,
     }),
 
     getters: {},
@@ -24,12 +25,20 @@ export const useInventoryStore = defineStore("inventory", {
         },
 
         /** Obtiene los productos */
-        async getProducts() {
+        async getProducts(categoryId) {
             this.loadingProducts = true;
+            this.products = {};
+            let url =  '/api/Products?order=desc';
+            this.selectedCategory = null;
+
+            if(categoryId){
+                this.selectedCategory = categoryId;
+                url = `/api/Products/Category/${categoryId}?order=desc`;
+            }
 
             axios({
                 method: "get",
-                url: "/api/Products?order=desc",
+                url: url,
                 params: {
                     order: 'desc'
                 }
