@@ -38,6 +38,37 @@ class BillDiscounts
         return $products;
     }
 
+    public static function getCurrentPriceProduct($product)
+    {
+        $discounts = BillDiscounts::getDiscounts();
+
+        $idGroups = array_column($discounts["group"]->toArray(), 'Type_Value');
+        $idItems = array_column($discounts["item"]->toArray(), 'Type_Value');
+
+
+        $IndexDiscByGroup = array_search($product['Code_Group'], $idGroups);
+        $IndexDiscByItem = array_search($product['Id'], $idItems);
+
+        $hasDiscToAll = !($discounts["all"]->isEmpty());
+        $hasDiscByGroup = ($IndexDiscByGroup !== false);
+        $hasDiscByItem = ($IndexDiscByItem !== false);
+
+        $applyDiscountToAll = $hasDiscToAll && !$hasDiscByGroup && !$hasDiscByItem;
+        $ApplyDiscountByGroup = $hasDiscByGroup && !$hasDiscByItem;
+
+        $discountToApply = null;
+        if ($applyDiscountToAll) $discountToApply = $discounts["all"][0];
+        elseif ($ApplyDiscountByGroup) $discountToApply = $discounts["group"][$IndexDiscByGroup];
+        elseif ($hasDiscByItem) $discountToApply = $discounts["item"][$IndexDiscByItem];
+
+        $product->Current_Price = (isset($discountToApply) && !is_null($discountToApply))
+            ? BillDiscounts::calculateCurrentPrice($product, $discountToApply)
+            : $product->Previous_Price;
+
+
+        return $product;
+    }
+
     private static function getDiscounts()
     {
         $Discounts = Discounts::where("Apply", "=", "app")

@@ -94,6 +94,18 @@ class Product extends Model
     ];
 
     /**
+     * Define la relación uno a muchos con el modelo ProductImages.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function productImages()
+    {
+        $productImages = $this->hasMany(ProductImages::class, 'Id_Inventory_Sele', 'Id');
+
+        return $productImages;
+    }
+
+    /**
      * Get a custom query builder for the model's table.
      *
      * @return \Illuminate\Database\Eloquent\Builder
@@ -115,6 +127,22 @@ class Product extends Model
                         NULL,
                         CONCAT('" . env('ASSETS_GESADMIN') . "', '/Items/', `Image`)
                     ) AS  `UrlImage`"
+                );
+            }
+
+            public function addUrlServeImage(): Builder
+            {
+                $ProductTable = '001_droi_p1_t1_inventory_sele';
+                return $this->selectRaw(
+                    "*,
+                    Price_App AS Previous_Price,
+                    0.00 AS Current_Price,
+                    $ProductTable.Id,
+                    if(
+                        COALESCE(`Image`, '') = '',
+                        NULL,
+                        CONCAT('" . env('ASSETS_GESADMIN') . "', '/Items/')
+                    ) AS  `UrlServerImage`"
                 );
             }
 

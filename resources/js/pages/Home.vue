@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router';
 import { onMounted, ref, defineProps } from "vue";
 
 const inventoryStore = useInventoryStore();
-const route = useRouter();
+const router = useRouter();
 
 const props = defineProps({
   categoryId: {
@@ -28,11 +28,15 @@ function formatCurrency(value) {
         maximumFractionDigits: 0
     }).format(numberValue);
 }
+
+const navigateToProduct = (productId) => {
+    router.push({ path: `/product/${productId}` });
+};
 </script>
 
 <template>
     <div class="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4 xl:gap-x-8">
-        <div v-for="product in inventoryStore.products" :key="product.id" class="group relative">
+        <div v-for="product in inventoryStore.products" :key="product.Id" class="group relative" @click="navigateToProduct(product.Id)">
             <div
                 class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 aspect-none group-hover:opacity-75 md:h-80 sm:h-60 h-[200px]">
                 <img :src="product.UrlImage ?? '/storage/default.jpg'" :alt="product.Product"
@@ -48,7 +52,7 @@ function formatCurrency(value) {
                             {{ product.Product }}
                         </a>
                     </h3>
-                    <p class="mt-1 text-sm text-gray-500">{{ product.Description }}</p>
+                    <p class="mt-1 text-sm text-gray-500 line-clamp-1">{{ product.Description }}</p>
                 </div>
                 <div class="grid justify-items-end">
                     <p class="text-xs text-gray-400 line-through"

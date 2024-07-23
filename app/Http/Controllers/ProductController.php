@@ -50,6 +50,56 @@ class ProductController extends Controller
         return BillDiscounts::getCurrentPrice($Product);
     }
 
+    public function showProduct(Request $request, $idProduct)
+    {
+        // Obtener la configuración del negocio
+        $config = $this->getConfig();
+
+        // Obtener el token de autenticación de la solicitud
+        $token = $request->bearerToken();
+
+        // Verificar la autenticación del usuario a través del token
+        $user = $this->isAuthenticated($token);
+
+        // El token no es válido, maneja el error o la respuesta correspondiente
+        if ($user['state'] == "Unauthorized") return response()->json([
+            "message" => $user['state'] . "."
+        ]);
+
+        $Product = Product::with([
+            'productImages',
+        ])->addUrlServeImage()->addUnitsGesadmin();
+
+        $WarehouseProductTable = '001_droi_p1_t1_warehouse_inventory';
+        $ProductTable = '001_droi_p1_t1_inventory_sele';
+
+        if (isset($rules) && $rules == "general") {
+            $Product = $Product->where($ProductTable . '.Price_App', '<>', 0)
+                ->where($WarehouseProductTable . '.Id_Warehouse', $config->Id_Warehouse)
+                ->where($WarehouseProductTable . '.State', 'Active')
+                ->where(function ($query) use ($config) {
+                    $query->where(function ($query) use ($config) {
+                        $query->where('001_droi_p1_t1_inventory_sele.Type', 'Recurrent')
+                            ->where(function ($query) use ($config) {
+                                $query->selectRaw('
+                                COALESCE(
+                                    COUNT(*),
+                                    0
+                                ) AS units
+                            ')
+                                    ->from('001_droi_p1_t2_inventory_serial')
+                                    ->where('001_droi_p1_t2_inventory_serial.State', 'Storage')
+                                    ->whereRaw('001_droi_p1_t2_inventory_serial.Code_Item = 001_droi_p1_t1_inventory_sele.Id');
+                            }, '>', 0);
+                    })->orWhere('001_droi_p1_t1_inventory_sele.Type', '!=', 'Recurrent');
+                });
+        }
+
+        $Product = $Product->where('Id', $idProduct)->first();
+
+        return BillDiscounts::getCurrentPriceProduct($Product);
+    }
+
     /**
      * Muestra una lista de productos por categoría.
      *
