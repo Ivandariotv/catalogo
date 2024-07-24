@@ -14,9 +14,16 @@ export const useInventoryStore = defineStore("inventory", {
         loadingProduct: true,
         selectedImage: null,
         shoppingCart: [],
+        openShoppingCart: false,
     }),
 
-    getters: {},
+    getters: {
+        subtotal: (state) => {
+            return state.shoppingCart.reduce((total, product) => {
+                return total + (product.Current_Price * product.units);
+            }, 0);
+        }
+    },
 
     actions: {
         /** Obtiene las categorias */
@@ -85,6 +92,8 @@ export const useInventoryStore = defineStore("inventory", {
         },
 
         addToShoppingCart(product) {
+            this.openShoppingCart = true;
+
             // Buscar el producto en el carrito por su ID
             const existingProductIndex = this.shoppingCart.findIndex(item => item.Id === product.Id);
 
@@ -96,6 +105,46 @@ export const useInventoryStore = defineStore("inventory", {
                 product.units = 1;
                 this.shoppingCart = [...this.shoppingCart, product];
             }
+
+            this.saveToLocalStorage(this.shoppingCart);
+        },
+
+        removeFromShoppingCart(product) {
+            const existingProductIndex = this.shoppingCart.findIndex(item => item.Id === product.Id);
+
+            if (existingProductIndex !== -1) {
+                // Si el producto ya existe en el carrito, disminuir su cantidad de unidades
+                this.shoppingCart[existingProductIndex].units -= 1;
+
+                // Si la cantidad de unidades es 0, eliminar el producto del carrito
+                if (this.shoppingCart[existingProductIndex].units === 0) {
+                    this.shoppingCart.splice(existingProductIndex, 1);
+                }
+            }
+
+            this.saveToLocalStorage(this.shoppingCart);
+        },
+
+        removeItemFromShoppingCart(product) {
+            const existingProductIndex = this.shoppingCart.findIndex(item => item.Id === product.Id);
+
+            if (existingProductIndex !== -1) {
+                // Si el producto ya existe en el carrito, lo elimina
+                this.shoppingCart.splice(existingProductIndex, 1);
+            }
+
+            this.saveToLocalStorage(this.shoppingCart);
+        },
+
+        // Función auxiliar para guardar el estado en Local Storage
+        saveToLocalStorage(cart) {
+            localStorage.setItem('shoppingCart', JSON.stringify(cart));
+        },
+
+        // Función auxiliar para cargar el estado desde Local Storage
+        loadFromLocalStorage() {
+            const cart = localStorage.getItem('shoppingCart');
+            this.shoppingCart = cart ? JSON.parse(cart) : [];
         }
     },
 });

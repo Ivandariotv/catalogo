@@ -70,8 +70,9 @@ function changeImage(urlImage) {
                         <p class="text-2xl font-extrabold text-gray-900 sm:text-3xl ">
                             {{ formatCurrency(inventoryStore.product.Current_Price) }}
                         </p>
-                        <p class="text-base font-semibold sm:text-xl text-gray-400 line-through">
-                            {{ formatCurrency(inventoryStore.product.Current_Price) }}
+                        <p class="text-base font-semibold sm:text-xl text-gray-400 line-through"
+                            v-if="inventoryStore.product.Current_Price != inventoryStore.product.Previous_Price">
+                            {{ formatCurrency(inventoryStore.product.Previous_Price) }}
                         </p>
                     </div>
 

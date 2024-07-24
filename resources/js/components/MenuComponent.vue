@@ -1,7 +1,8 @@
 <script setup>
 import { Disclosure } from '@headlessui/vue'
-import { MagnifyingGlassIcon, ShoppingCartIcon } from '@heroicons/vue/24/outline'
+import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 import { useInventoryStore } from "../stores/Inventory.js";
+import ShoppingCart from "./ShoppingCartComponent.vue";
 import { onMounted, ref, reactive } from "vue";
 import { useRouter } from 'vue-router';
 
@@ -73,9 +74,7 @@ onMounted(async () => {
                             <button type="button" class="relative p-2 text-gray-900 hover:text-gray-600">
                                 <MagnifyingGlassIcon class="h-6 w-6" aria-hidden="true" />
                             </button>
-                            <button type="button" class="relative p-2 text-gray-900 hover:text-gray-600">
-                                <ShoppingCartIcon class="h-6 w-6" aria-hidden="true" />
-                            </button>
+                            <ShoppingCart />
                         </div>
                     </div>
                 </div>
@@ -85,7 +84,7 @@ onMounted(async () => {
         <header class="bg-white mx-auto max-w-7xl relative">
             <!-- Botones de navegación -->
             <div
-                class="absolute left-0 bg-gradient-to-r from-white from-20% lg:from-50% to-transparent to-60% lg:to-60% pl-2 sm:pl-3 lg:pl-4 h-full flex items-center z-50">
+                class="absolute left-0 bg-gradient-to-r from-white from-20% lg:from-50% to-transparent to-60% lg:to-60% pl-2 sm:pl-3 lg:pl-4 h-full flex items-center z-10">
                 <button @click="scrollLeft"
                     class="w-6 h-6 px-[7.5px] text-white bg-gray-600 hover:bg-gray-800 ring-0 focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full text-sm text-center inline-flex items-center me-2 transition duration-200 ease-in-out"
                     :style="{ opacity: state.atStart ? '0' : '100' }" :disabled="state.atStart">
@@ -94,7 +93,7 @@ onMounted(async () => {
             </div>
 
             <div
-                class="absolute right-0 bg-gradient-to-r from-transparent from-40% lg:from-20% to-white to-80% lg:to-50% pr-2 sm:pr-3 lg:pr-4 h-full flex items-center z-50">
+                class="absolute right-0 bg-gradient-to-r from-transparent from-40% lg:from-20% to-white to-80% lg:to-50% pr-2 sm:pr-3 lg:pr-4 h-full flex items-center z-10">
                 <button @click="scrollRight"
                     class="w-6 h-6 px-[9px] text-white bg-gray-600 hover:bg-gray-800 ring-0 focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full text-sm text-center inline-flex items-center me-2 transition duration-200 ease-in-out"
                     :style="{ opacity: state.atEnd ? '0' : '100' }" :disabled="state.atEnd">
