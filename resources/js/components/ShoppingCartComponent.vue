@@ -4,6 +4,7 @@ import { useInventoryStore } from "../stores/Inventory.js";
 import { useRouter } from 'vue-router';
 import { XMarkIcon, ShoppingCartIcon } from '@heroicons/vue/24/outline'
 import { onMounted } from "vue";
+import CompleteYourInfo from './CompleteYourInfoComponent.vue'
 
 const inventoryStore = useInventoryStore();
 const router = useRouter();
@@ -29,30 +30,6 @@ function formatCurrency(value) {
 onMounted(() => {
     inventoryStore.loadFromLocalStorage();
 });
-
-const products = [
-    {
-        id: 1,
-        name: 'Throwback Hip Bag',
-        href: '#',
-        color: 'Salmon',
-        price: '$90.00',
-        quantity: 1,
-        imageSrc: 'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg',
-        imageAlt: 'Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.',
-    },
-    {
-        id: 2,
-        name: 'Medium Stuff Satchel',
-        href: '#',
-        color: 'Blue',
-        price: '$32.00',
-        quantity: 1,
-        imageSrc: 'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-02.jpg',
-        imageAlt:
-            'Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.',
-    }
-]
 </script>
 
 <template>
@@ -191,8 +168,8 @@ const products = [
                                         </div>
                                         <p class="mt-0.5 text-sm text-gray-500">La compra continuará por WhatsApp.</p>
                                         <div class="mt-6">
-                                            <a href="#"
-                                                class="flex items-center justify-center rounded-md border border-transparent bg-gray-800 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-gray-950">Verificar</a>
+                                            <a @click="inventoryStore.verifyShoppingCart()"
+                                                :class="(inventoryStore.shoppingCart.length > 0 ? 'cursor-pointer bg-gray-800 hover:bg-gray-950' : 'bg-gray-300') + ' flex items-center justify-center rounded-md border border-transparent px-6 py-3 text-base font-medium text-white shadow-sm'">Verificar</a>
                                         </div>
                                         <div class="mt-6 flex justify-center text-center text-sm text-gray-500">
                                             <p>
@@ -214,4 +191,6 @@ const products = [
             </div>
         </Dialog>
     </TransitionRoot>
+
+    <CompleteYourInfo />
 </template>

@@ -15,6 +15,11 @@ export const useInventoryStore = defineStore("inventory", {
         selectedImage: null,
         shoppingCart: [],
         openShoppingCart: false,
+        openCompleteYourInfo: false,
+        yourInformation: {
+            name: '',
+            whatsapp: ''
+        }
     }),
 
     getters: {
@@ -145,6 +150,29 @@ export const useInventoryStore = defineStore("inventory", {
         loadFromLocalStorage() {
             const cart = localStorage.getItem('shoppingCart');
             this.shoppingCart = cart ? JSON.parse(cart) : [];
+        },
+
+        verifyShoppingCart() {
+            if (this.shoppingCart.length > 0) {
+                this.openShoppingCart = false;
+                this.openCompleteYourInfo = true;
+            }
+        },
+
+        finishShopping() {
+            if (this.yourInformation.name && this.yourInformation.whatsapp) {
+                this.shoppingCart = [];
+                this.saveToLocalStorage(this.shoppingCart);
+                this.openCompleteYourInfo = false;
+                this.redirectToWhatsApp('573105151328', 'Hola, me gustaría continuar mi compra.')
+            } else {
+                alert('Por favor, completa toda la información requerida.')
+            }
+        },
+
+        redirectToWhatsApp(phoneNumber, message) {
+            const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`
+            window.location.href = url
         }
     },
 });
