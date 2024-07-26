@@ -71,9 +71,16 @@ onMounted(async () => {
                     </div>
                     <div>
                         <div class="ml-4 flex items-center md:ml-6 ">
-                            <button type="button" class="relative p-2 text-gray-900 hover:text-gray-600">
-                                <MagnifyingGlassIcon class="h-6 w-6" aria-hidden="true" />
-                            </button>
+                            <div class="relative">
+                                <input type="search" id="default-search"
+                                    class="block w-full p-[11px] text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50"
+                                    placeholder="Buscar" v-model="inventoryStore.search" required />
+                                <button @click="inventoryStore.getProductsByKeyword()"
+                                    class="text-gray-800 absolute end-1 bottom-1 bg-gray-50 active:bg-gray-200 font-medium rounded-lg text-sm px-1.5 py-1.5">
+                                    <MagnifyingGlassIcon class="h-6 w-6" aria-hidden="true" />
+                                </button>
+                            </div>
+
                             <ShoppingCart />
                         </div>
                     </div>
@@ -137,3 +144,11 @@ onMounted(async () => {
         </main>
     </div>
 </template>
+
+<style>
+/* Quitar el borde al seleccionar */
+#default-search:focus {
+    outline: none;
+    box-shadow: none;
+}
+</style>

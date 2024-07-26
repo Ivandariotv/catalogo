@@ -21,6 +21,7 @@ export const useInventoryStore = defineStore("inventory", {
             whatsapp: ''
         },
         companyWhatsapp: null,
+        search: "",
     }),
 
     getters: {
@@ -90,6 +91,24 @@ export const useInventoryStore = defineStore("inventory", {
                 this.nextProductPageURL = data.next_page_url;
                 this.loadingProducts = false;
             });
+        },
+
+        async getProductsByKeyword() {
+            if (this.search != "") {
+                this.loadingProducts = true;
+                this.products = {};
+
+                axios({
+                    method: "get",
+                    url: `/api/Products/Search/${this.search}`,
+                }).then(({ data }) => {
+                    this.products = data.data;
+                    this.nextProductPageURL = data.next_page_url;
+                    this.loadingProducts = false;
+                });
+            } else {
+                this.getProducts(null);
+            }
         },
 
         /** Obtiene un producto completo */
