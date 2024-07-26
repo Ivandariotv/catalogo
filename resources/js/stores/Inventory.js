@@ -19,7 +19,8 @@ export const useInventoryStore = defineStore("inventory", {
         yourInformation: {
             name: '',
             whatsapp: ''
-        }
+        },
+        companyWhatsapp: null,
     }),
 
     getters: {
@@ -31,6 +32,17 @@ export const useInventoryStore = defineStore("inventory", {
     },
 
     actions: {
+        /** Obtiene whatsapp de la empresa */
+        async getApplicationSettings() {
+            axios({
+                method: "get",
+                url: "/api/applicationSettings",
+            }).then(({ data }) => {
+                this.companyWhatsapp = data.whatsapp.number;
+            });
+        },
+
+
         /** Obtiene las categorias */
         async getCategories() {
             axios({
@@ -161,13 +173,43 @@ export const useInventoryStore = defineStore("inventory", {
 
         finishShopping() {
             if (this.yourInformation.name && this.yourInformation.whatsapp) {
+                let message = `Hola, soy ${this.yourInformation.name}
+quiero hacer este pedido en Agua Marina:
+========================
+`;
+
+                this.shoppingCart.forEach(product => {
+                    message += `
+- ${product.units} ${product.Product} ${product.Barcode} / ${this.formatCurrency(product.Current_Price)}`;
+                });
+
+                message += `
+========================
+Total: ${this.formatCurrency(this.subtotal)}
+========================
+Mi información:
+Nombre: ${this.yourInformation.name}
+Celular: ${this.yourInformation.whatsapp}`;
+
                 this.shoppingCart = [];
                 this.saveToLocalStorage(this.shoppingCart);
                 this.openCompleteYourInfo = false;
-                this.redirectToWhatsApp('573105151328', 'Hola, me gustaría continuar mi compra.')
+
+                this.redirectToWhatsApp(`57${this.companyWhatsapp}`, message)
             } else {
                 alert('Por favor, completa toda la información requerida.')
             }
+        },
+
+        formatCurrency(value) {
+            const numberValue = Number(value);
+            if (isNaN(numberValue)) {
+                return value; // Mantener el valor sin formatear si no es un número válido
+            }
+            return new Intl.NumberFormat('es-CO', {
+                style: 'currency', currency: 'COP', minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(numberValue);
         },
 
         redirectToWhatsApp(phoneNumber, message) {

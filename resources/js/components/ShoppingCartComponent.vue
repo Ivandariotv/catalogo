@@ -29,6 +29,7 @@ function formatCurrency(value) {
 // carga el contenido de la pagina
 onMounted(() => {
     inventoryStore.loadFromLocalStorage();
+    inventoryStore.getApplicationSettings();
 });
 </script>
 

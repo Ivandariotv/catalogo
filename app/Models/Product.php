@@ -20,7 +20,6 @@ class Product extends Model
     protected $hidden = [
         "CUNI",
         "Display_Order",
-        "Barcode",
         "Code_Group",
         "Image",
         "Make",
