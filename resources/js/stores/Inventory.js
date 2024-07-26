@@ -2,6 +2,8 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import axios from "axios";
 import Product from "../pages/Product.vue";
+import { useRouter } from 'vue-router';
+
 
 export const useInventoryStore = defineStore("inventory", {
     state: () => ({
@@ -22,6 +24,7 @@ export const useInventoryStore = defineStore("inventory", {
         },
         companyWhatsapp: null,
         search: "",
+        router: useRouter(),
     }),
 
     getters: {
@@ -94,6 +97,7 @@ export const useInventoryStore = defineStore("inventory", {
         },
 
         async getProductsByKeyword() {
+            this.router.push({ path: '/' });
             if (this.search != "") {
                 this.loadingProducts = true;
                 this.products = {};
