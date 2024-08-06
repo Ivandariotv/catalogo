@@ -7,10 +7,10 @@ const inventoryStore = useInventoryStore();
 const router = useRouter();
 
 const props = defineProps({
-  categoryId: {
-    type: [String, Number],
-    required: false
-  }
+    categoryId: {
+        type: [String, Number],
+        required: false
+    }
 });
 
 // carga el contenido de la pagina
@@ -36,13 +36,16 @@ const navigateToProduct = (productId) => {
 
 <template>
     <div class="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4 xl:gap-x-8">
-        <div v-for="product in inventoryStore.products" :key="product.Id" class="group relative" @click="navigateToProduct(product.Id)">
+        <div v-for="product in inventoryStore.products" :key="product.Id" class="group relative"
+            @click="navigateToProduct(product.Id)">
             <div
-                class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 aspect-none group-hover:opacity-75 md:h-80 sm:h-60 h-[200px]">
+                class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 aspect-none group-hover:opacity-75 md:h-80 sm:h-60 h-[200px] relative">
+                <p class="flex h-10 items-center justify-center bg-gray-600 px-2 text-sm font-medium text-white sm:px-4 lg:px-6 absolute"
+                    v-if="product.UnitsGesadmin <= 0">Sin unidades</p>
                 <img :src="product.UrlImage ?? '/storage/default.jpg'" :alt="product.Product"
                     class="h-full w-full object-cover object-center lg:h-full lg:w-full" onerror="
                         if (this.src != '/storage/default.jpg') this.src = '/storage/default.jpg';
-                    " />
+                        " />
             </div>
             <div class="mt-4 flex justify-between">
                 <div>

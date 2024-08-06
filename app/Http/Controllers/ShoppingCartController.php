@@ -117,7 +117,7 @@ class ShoppingCartController extends Controller
             "Code_Product" => $Product->Id,
             "Product" => $Product->Product,
             "Description" => '',
-            "Price" => floatval($Product->Price_App),
+            "Price" => floatval($Product->Price_Sugerido),
             "Units" => 1,
             "Porcentaje" => intval($Product->Porcertage),
             "Porcetage_Impo" => intval($Product->ipoconsumo),
@@ -144,7 +144,7 @@ class ShoppingCartController extends Controller
         if ($request->units > 0) {
             if (empty($BillsProducts)) $BillsProducts = $this->createBillsProducts($Product);
 
-            $BillsProducts->Price = $Product->Price_App;
+            $BillsProducts->Price = $Product->Price_Sugerido;
             $BillsProducts->Units = $request->units;
             $BillsProducts->Discount = $DiscountValue * $request->units;
             $isUpdated = $BillsProducts->update();

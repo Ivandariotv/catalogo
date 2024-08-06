@@ -33,8 +33,8 @@ class Product extends Model
         "Price_Wholesale_Neto",
         "Price_Distributor",
         "Price_Distributor_Neto",
-        "Price_App",
-        "Price_App_Neto",
+        "Price_Sugerido",
+        "Price",
         "Price_Minimum",
         "Commission",
         "type_iva",
@@ -118,7 +118,7 @@ class Product extends Model
                 $ProductTable = '001_droi_p1_t1_inventory_sele';
                 return $this->selectRaw(
                     "*,
-                    Price_App AS Previous_Price,
+                    Price_Sugerido AS Previous_Price,
                     0.00 AS Current_Price,
                     $ProductTable.Id,
                     if(
@@ -134,7 +134,7 @@ class Product extends Model
                 $ProductTable = '001_droi_p1_t1_inventory_sele';
                 return $this->selectRaw(
                     "*,
-                    Price_App AS Previous_Price,
+                    Price_Sugerido AS Previous_Price,
                     0.00 AS Current_Price,
                     $ProductTable.Id,
                     if(
@@ -174,15 +174,20 @@ class Product extends Model
                 }
             }
 
-            public function addUnitsGesadmin(): Builder
+            public function addUnitsGesadmin($Id_Warehouse): Builder
             {
                 $SerialTable = '001_droi_p1_t2_inventory_serial';
                 $ProductTable = '001_droi_p1_t1_inventory_sele';
 
                 $subquery = "(
-                    SELECT COUNT(*)
-                    FROM $SerialTable
-                    WHERE Code_Item = $ProductTable.Id AND State = 'Storage'
+                    SELECT
+                        COUNT(*)
+                    FROM
+                        $SerialTable
+                    WHERE
+                        Code_Item = $ProductTable.Id AND
+                        State = 'Storage' AND
+                        Id_Warehouse = $Id_Warehouse
                 )";
 
                 return $this->selectRaw(

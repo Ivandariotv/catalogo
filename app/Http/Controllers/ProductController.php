@@ -68,29 +68,18 @@ class ProductController extends Controller
 
         $Product = Product::with([
             'productImages',
-        ])->addUrlServeImage()->addUnitsGesadmin();
+        ])->addUrlServeImage()->addUnitsGesadmin($config->Id_Warehouse);
 
         $WarehouseProductTable = '001_droi_p1_t1_warehouse_inventory';
         $ProductTable = '001_droi_p1_t1_inventory_sele';
 
         if (isset($rules) && $rules == "general") {
-            $Product = $Product->where($ProductTable . '.Price_App', '<>', 0)
+            $Product = $Product->where($ProductTable . '.Price_Sugerido', '<>', 0)
                 ->where($WarehouseProductTable . '.Id_Warehouse', $config->Id_Warehouse)
                 ->where($WarehouseProductTable . '.State', 'Active')
                 ->where(function ($query) use ($config) {
                     $query->where(function ($query) use ($config) {
-                        $query->where('001_droi_p1_t1_inventory_sele.Type', 'Recurrent')
-                            ->where(function ($query) use ($config) {
-                                $query->selectRaw('
-                                COALESCE(
-                                    COUNT(*),
-                                    0
-                                ) AS units
-                            ')
-                                    ->from('001_droi_p1_t2_inventory_serial')
-                                    ->where('001_droi_p1_t2_inventory_serial.State', 'Storage')
-                                    ->whereRaw('001_droi_p1_t2_inventory_serial.Code_Item = 001_droi_p1_t1_inventory_sele.Id');
-                            }, '>', 0);
+                        $query->where('001_droi_p1_t1_inventory_sele.Type', 'Recurrent');
                     })->orWhere('001_droi_p1_t1_inventory_sele.Type', '!=', 'Recurrent');
                 });
         }
@@ -392,7 +381,7 @@ class ProductController extends Controller
         $ProductTable = '001_droi_p1_t1_inventory_sele';
 
         $Product = Product::addUrlImage()
-            ->addUnitsGesadmin();
+            ->addUnitsGesadmin($config->Id_Warehouse);
 
         if (isset($rules) && $rules == "general") $Product = $Product->join(
             $WarehouseProductTable,
@@ -404,23 +393,12 @@ class ProductController extends Controller
         if (isset($productsIDs)) $Product = $Product->whereIn('Id', json_decode($productsIDs));
 
         if (isset($rules) && $rules == "general") {
-            $Product = $Product->where($ProductTable . '.Price_App', '<>', 0)
+            $Product = $Product->where($ProductTable . '.Price_Sugerido', '<>', 0)
                 ->where($WarehouseProductTable . '.Id_Warehouse', $config->Id_Warehouse)
                 ->where($WarehouseProductTable . '.State', 'Active')
                 ->where(function ($query) use ($config) {
                     $query->where(function ($query) use ($config) {
-                        $query->where('001_droi_p1_t1_inventory_sele.Type', 'Recurrent')
-                            ->where(function ($query) use ($config) {
-                                $query->selectRaw('
-                                COALESCE(
-                                    COUNT(*),
-                                    0
-                                ) AS units
-                            ')
-                                    ->from('001_droi_p1_t2_inventory_serial')
-                                    ->where('001_droi_p1_t2_inventory_serial.State', 'Storage')
-                                    ->whereRaw('001_droi_p1_t2_inventory_serial.Code_Item = 001_droi_p1_t1_inventory_sele.Id');
-                            }, '>', 0);
+                        $query->where('001_droi_p1_t1_inventory_sele.Type', 'Recurrent');
                     })->orWhere('001_droi_p1_t1_inventory_sele.Type', '!=', 'Recurrent');
                 });
         }
@@ -459,24 +437,11 @@ class ProductController extends Controller
             ->join($BPTable, "$BTable.Id", "=", "$BPTable.Id_Bill")
             ->join($PTable, "$BPTable.Code_Product", '=', "$PTable.Id")
 
-            ->where($PTable . '.Price_App', '<>', 0)
+            ->where($PTable . '.Price_Sugerido', '<>', 0)
 
             ->where(function ($query) use ($config) {
                 $query->where(function ($query) use ($config) {
-                    $query->Where('001_droi_p1_t1_inventory_sele.Type', 'Recurrent')
-                        ->where(function ($query) use ($config) {
-                            $query->selectRaw('
-                                COALESCE(
-                                    SUM(
-                                        IF(Type = "Add", Unit, 0) - IF(Type = "Remove", Unit, 0)
-                                    ),
-                                    0
-                                ) AS units
-                            ')
-                                ->from('001_droi_p1_t1_inventory_sale_c2_products_history_units')
-                                ->where('001_droi_p1_t1_inventory_sale_c2_products_history_units.Id_Warehouse', $config->Id_Warehouse)
-                                ->whereRaw('001_droi_p1_t1_inventory_sale_c2_products_history_units.Code_Item = 001_droi_p1_t1_inventory_sele.Id');;
-                        }, '>', 0);
+                    $query->Where('001_droi_p1_t1_inventory_sele.Type', 'Recurrent');
                 })->orWhere('001_droi_p1_t1_inventory_sele.Type', '!=', 'Recurrent');
             });
 

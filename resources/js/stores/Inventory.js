@@ -126,12 +126,14 @@ export const useInventoryStore = defineStore("inventory", {
                 url: `/api/Product/${productId}`,
             }).then(({ data }) => {
                 this.product = data;
-                this.selectedImage = data.UrlServerImage + data.product_images[0].name;
+                this.selectedImage = data.UrlServerImage + data.product_images[0]?.name;
                 this.loadingProduct = false;
             });
         },
 
         addToShoppingCart(product) {
+            if (product.UnitsGesadmin <= 0) return false;
+
             this.openShoppingCart = true;
 
             // Buscar el producto en el carrito por su ID

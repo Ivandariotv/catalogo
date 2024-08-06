@@ -77,7 +77,11 @@ function changeImage(urlImage) {
                     </div>
 
                     <div class="mt-6 sm:gap-4 sm:items-center sm:flex sm:mt-8">
-                        <a class="flex items-center justify-center py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 cursor-pointer"
+                        <a :class="(
+                                inventoryStore.product.UnitsGesadmin <= 0 ?
+                                    'text-gray-400 border-gray-50 bg-gray-50 cursor-not-allowed' :
+                                    'text-gray-900 border-gray-200 bg-white hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 cursor-pointer') +
+                                ' flex items-center justify-center py-2.5 px-5 text-sm font-medium focus:outline-none rounded-lg border'"
                             role="button" @click="inventoryStore.addToShoppingCart(inventoryStore.product)">
                             <svg class="w-5 h-5 -ms-2 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                                 width="24" height="24" fill="none" viewBox="0 0 24 24">
