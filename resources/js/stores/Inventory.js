@@ -25,6 +25,7 @@ export const useInventoryStore = defineStore("inventory", {
         companyWhatsapp: null,
         search: "",
         router: useRouter(),
+        banner: [],
     }),
 
     getters: {
@@ -43,6 +44,16 @@ export const useInventoryStore = defineStore("inventory", {
                 url: "/api/applicationSettings",
             }).then(({ data }) => {
                 this.companyWhatsapp = data.whatsapp.number;
+            });
+        },
+
+        /** Obtiene whatsapp de la empresa */
+        async getBanners() {
+            axios({
+                method: "get",
+                url: "/api/Banners",
+            }).then(({ data }) => {
+                this.banner = data;
             });
         },
 

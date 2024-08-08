@@ -3,11 +3,13 @@ import { Disclosure } from '@headlessui/vue'
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 import { useInventoryStore } from "../stores/Inventory.js";
 import ShoppingCart from "./ShoppingCartComponent.vue";
+import Carousel from "./CarouselComponent.vue";
 import { onMounted, ref, reactive } from "vue";
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 
 const inventoryStore = useInventoryStore();
 const router = useRouter();
+const route = useRoute();
 
 const scrollContainer = ref(null);
 const state = reactive({
@@ -87,6 +89,8 @@ onMounted(async () => {
                 </div>
             </div>
         </Disclosure>
+
+        <Carousel v-if="route.path == '/'" class="mx-auto max-w-7xl my-2" />
 
         <header class="bg-white mx-auto max-w-7xl relative">
             <!-- Botones de navegación -->
