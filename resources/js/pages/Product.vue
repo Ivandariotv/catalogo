@@ -68,10 +68,10 @@ function changeImage(urlImage) {
                     </h1>
                     <div class="mt-4 items-end gap-4 ">
                         <p class="text-2xl font-extrabold text-gray-900 sm:text-3xl ">
-                            {{ formatCurrency(inventoryStore.product.Current_Price) }}
+                            {{ formatCurrency((inventoryStore.totalNumberProducts >= 3 ? inventoryStore.product.Price_Wholesale : inventoryStore.product.Current_Price)) }}
                         </p>
                         <p class="text-base font-semibold sm:text-xl text-gray-400 line-through"
-                            v-if="inventoryStore.product.Current_Price != inventoryStore.product.Previous_Price">
+                            v-if="inventoryStore.totalNumberProducts >= 3">
                             {{ formatCurrency(inventoryStore.product.Previous_Price) }}
                         </p>
                     </div>

@@ -30,8 +30,31 @@ export const useInventoryStore = defineStore("inventory", {
 
     getters: {
         subtotal: (state) => {
+            // Asegúrate de que state.shoppingCart esté definido antes de proceder
+            if (!state.shoppingCart) return 0;
+
+            // Calcula el número total de productos directamente
+            const totalNumberProducts = state.shoppingCart.reduce((total, product) => {
+                return total + product.units;
+            }, 0);
+
+            // Verifica si hay al menos 3 productos
+            if (totalNumberProducts >= 3) {
+                return state.shoppingCart.reduce((total, product) => {
+                    return total + (product.Price_Wholesale * product.units);
+                }, 0);
+            } else {
+                return state.shoppingCart.reduce((total, product) => {
+                    return total + (product.Current_Price * product.units);
+                }, 0);
+            }
+
+            return 0; // Devuelve 0 si no hay al menos 3 productos
+        },
+
+        totalNumberProducts: (state) => {
             return state.shoppingCart.reduce((total, product) => {
-                return total + (product.Current_Price * product.units);
+                return total + product.units;
             }, 0);
         }
     },

@@ -58,9 +58,9 @@ const navigateToProduct = (productId) => {
                     <p class="mt-1 text-sm text-gray-500 line-clamp-1">{{ product.Description }}</p>
                 </div>
                 <div class="grid justify-items-end">
-                    <p class="text-sm font-bold text-gray-900">{{ formatCurrency(product.Current_Price) }}</p>
+                    <p class="text-sm font-bold text-gray-900">{{ formatCurrency((inventoryStore.totalNumberProducts >= 3 ? product.Price_Wholesale : product.Current_Price)) }}</p>
                     <p class="text-xs text-gray-400 line-through"
-                        v-if="product.Current_Price != product.Previous_Price">
+                        v-if="inventoryStore.totalNumberProducts >= 3">
                         {{ formatCurrency(product.Previous_Price) }}</p>
                 </div>
             </div>
