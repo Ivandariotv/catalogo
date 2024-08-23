@@ -5,10 +5,22 @@
             <!-- Carousel items -->
             <div v-for="(item, index) in inventoryStore.banner" :key="index"
                 :class="['duration-200 ease-linear', { 'hidden': currentIndex !== index }]" data-carousel-item>
+                <!-- Check if item is an image or video -->
+            <template v-if="isImage(item.UrlImage)">
                 <img :src="item.UrlImage"
                     class="absolute block w-full h-full object-cover object-center -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
                     :alt="item.Name">
-                <span aria-hidden="true" class="absolute inset-0" />
+            </template>
+            <template v-else-if="isVideo(item.UrlImage)">
+                <video class="absolute block w-full h-full object-cover object-center -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+                    :src="item.UrlImage"
+                    autoplay muted loop>
+                    <!-- Optional: Fallback text for browsers that don't support the video element -->
+                    Tu navegador no soporta la reproducción de videos.
+                </video>
+
+            </template>
+            <span aria-hidden="true" class="absolute inset-0" />
             </div>
         </div>
         <!-- Slider controls -->
@@ -59,6 +71,16 @@ const prev = () => {
 const next = () => {
     currentIndex.value = (currentIndex.value + 1) % inventoryStore.banner.length;
 };
+
+// Function to check if the URL is an image
+function isImage(url) {
+    return /\.(jpg|jpeg|png|gif|webp)$/i.test(url);
+}
+
+// Function to check if the URL is a video
+function isVideo(url) {
+    return /\.(mp4|webm|ogg)$/i.test(url);
+}
 
 onMounted(() => {
     showSlide(currentIndex.value);
