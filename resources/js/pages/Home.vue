@@ -62,6 +62,9 @@ const navigateToProduct = (productId) => {
                     <p class="text-xs text-gray-400 line-through"
                         v-if="inventoryStore.totalNumberProducts >= 3">
                         {{ formatCurrency(product.Previous_Price) }}</p>
+                    <p class="text-xs line-through bg-red-500 py-1 px-3 text-white rounded-s-lg" v-else>
+                        {{ product.Price_Wholesale }}
+                    </p>
                 </div>
             </div>
         </div>

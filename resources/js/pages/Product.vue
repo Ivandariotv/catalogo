@@ -66,13 +66,17 @@ function changeImage(urlImage) {
                     <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl ">
                         {{ inventoryStore.product.Product }}
                     </h1>
-                    <div class="mt-4 items-end gap-4 ">
-                        <p class="text-2xl font-extrabold text-gray-900 sm:text-3xl ">
+                    <div class="mt-4 grid justify-items-start gap-4" >
+                        <p class="text-2xl font-extrabold text-gray-900 sm:text-3xl">
                             {{ formatCurrency((inventoryStore.totalNumberProducts >= 3 ? inventoryStore.product.Price_Wholesale : inventoryStore.product.Current_Price)) }}
                         </p>
                         <p class="text-base font-semibold sm:text-xl text-gray-400 line-through"
                             v-if="inventoryStore.totalNumberProducts >= 3">
                             {{ formatCurrency(inventoryStore.product.Previous_Price) }}
+                        </p>
+
+                        <p dir="rtl" class="text-base font-semibold sm:text-xl line-through bg-red-500 py-1 px-3 text-white rounded-s-lg" v-else>
+                            {{ inventoryStore.product.Price_Wholesale }}
                         </p>
                     </div>
 

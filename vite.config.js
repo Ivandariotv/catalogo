@@ -22,4 +22,15 @@ export default defineConfig({
             vue: 'vue/dist/vue.esm-bundler.js',
         },
     },
+    server: {
+        watch: {
+            usePolling: true, // Esto mejora la detección de cambios en Docker
+        },
+        host: '0.0.0.0',
+        port: 5173,
+        strictPort: true,
+        hmr: {
+            host: 'localhost',
+        },
+    },
 });
