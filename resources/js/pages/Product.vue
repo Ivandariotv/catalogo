@@ -76,7 +76,7 @@ function changeImage(urlImage) {
                         </p>
 
                         <p dir="rtl" class="text-base font-semibold sm:text-xl line-through bg-red-500 py-1 px-3 text-white rounded-s-lg" v-else>
-                            {{ inventoryStore.product.Price_Wholesale }}
+                            {{ formatCurrency(inventoryStore.product.Price_Wholesale) }}
                         </p>
                     </div>
 
