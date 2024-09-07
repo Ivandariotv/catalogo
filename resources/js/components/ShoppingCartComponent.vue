@@ -79,8 +79,8 @@ onMounted(() => {
                                                         <div
                                                             class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 relative">
                                                             <img class="h-full w-full object-cover object-center"
-                                                                :src="product.product_images[0]?.name ? product.UrlServerImage + product.product_images[0]?.name : '/storage/default.jpg'"
-                                                                onerror="if (this.src != '/storage/default.jpg') this.src = '/storage/default.jpg';" />
+                                                                :src="product.product_images[0]?.name ? product.UrlServerImage + product.product_images[0]?.name : '/images/default.jpg'"
+                                                                onerror="if (this.src != '/images/default.jpg') this.src = '/images/default.jpg';" />
                                                             <span aria-hidden="true" class="absolute inset-0" />
                                                         </div>
 

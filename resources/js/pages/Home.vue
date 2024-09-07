@@ -42,9 +42,9 @@ const navigateToProduct = (productId) => {
                 class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 aspect-none group-hover:opacity-75 md:h-80 sm:h-60 h-[200px] relative">
                 <p class="flex h-10 items-center justify-center bg-gray-600 px-2 text-sm font-medium text-white sm:px-4 lg:px-6 absolute"
                     v-if="product.UnitsGesadmin <= 0">Sin unidades</p>
-                <img :src="product.UrlImage ?? '/storage/default.jpg'" :alt="product.Product"
+                <img :src="product.UrlImage ?? '/images/default.jpg'" :alt="product.Product"
                     class="h-full w-full object-cover object-center lg:h-full lg:w-full" onerror="
-                        if (this.src != '/storage/default.jpg') this.src = '/storage/default.jpg';
+                        if (this.src != '/images/default.jpg') this.src = '/images/default.jpg';
                         " />
             </div>
             <div class="mt-4 flex justify-between">
@@ -62,7 +62,7 @@ const navigateToProduct = (productId) => {
                     <p class="text-xs text-gray-400 line-through"
                         v-if="inventoryStore.totalNumberProducts >= 3">
                         {{ formatCurrency(product.Previous_Price) }}</p>
-                    <p class="text-xs line-through bg-red-500 py-1 px-3 text-white rounded-s-lg" v-else>
+                    <p class="text-xs rounded-s-lg" v-else>
                         {{ formatCurrency(product.Price_Wholesale) }}
                     </p>
                 </div>

@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
     @vite('resources/css/app.css')
     <title>Catálogo Agua Marina - Aguamarina Colombia</title>
-    <link rel="icon" type="image/png" href="{{ asset('/storage/logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('/images/logo.png') }}">
 </head>
 
 <body>

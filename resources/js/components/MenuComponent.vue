@@ -68,7 +68,7 @@ onMounted(async () => {
                 <div class="flex h-16 items-center justify-between">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
-                            <img class="h-16 w-16" src="/storage/logo.png" alt="Your Company" />
+                            <img class="h-16 w-16" src="/images/logo.png" alt="Your Company" />
                         </div>
                     </div>
                     <div>
@@ -118,7 +118,7 @@ onMounted(async () => {
                 <div
                     :class="(inventoryStore.selectedCategory == null ? 'text-gray-950  font-bold' : 'text-gray-400') + ' cursor-pointer hover:text-gray-950 hover:font-bold group relative snap-start transition duration-200 ease-in-out'">
                     <div :class="(inventoryStore.selectedCategory == null ? 'border-[#00BBFF]' : '') + ' bg-cover w-20 h-20 bg-center overflow-hidden rounded-full border-2 group-hover:border-[#00BBFF] transition duration-200 ease-in-out'"
-                        :style="{ backgroundImage: 'url(/storage/menu_all.jpg)' }" @click="navigateToCategory(null)">
+                        :style="{ backgroundImage: 'url(/images/menu_all.jpg)' }" @click="navigateToCategory(null)">
                     </div>
                     <p class="w-20 text-sm text-center pt-2 line-clamp-2">Todo</p>
                 </div>
@@ -129,9 +129,9 @@ onMounted(async () => {
                     <div
                         :class="(inventoryStore.selectedCategory == category.Code ? 'border-[#00BBFF]' : '') + ' bg-cover w-20 h-20 bg-center overflow-hidden rounded-full border-2 group-hover:border-[#00BBFF] transition duration-200 ease-in-out'">
 
-                        <img :src="category.UrlImage ?? '/storage/menu_all.jpg'" :alt="category.Name"
+                        <img :src="category.UrlImage ?? '/images/menu_all.jpg'" :alt="category.Name"
                             class="h-full w-full object-cover object-center" onerror="
-                            if (this.src != '/storage/menu_all.jpg') this.src = '/storage/menu_all.jpg';
+                            if (this.src != '/images/menu_all.jpg') this.src = '/images/menu_all.jpg';
                         " />
                     </div>
                     <p class="w-20 text-sm text-center pt-2 line-clamp-2">
