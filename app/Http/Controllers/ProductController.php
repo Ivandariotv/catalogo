@@ -380,8 +380,8 @@ class ProductController extends Controller
         $WarehouseProductTable = '001_droi_p1_t1_warehouse_inventory';
         $ProductTable = '001_droi_p1_t1_inventory_sele';
 
-        $Product = Product::addUrlImage()
-            ->addUnitsGesadmin($config->Id_Warehouse);
+        $Product = Product::where('Code_Group', '!=', Null)->addUrlImage()
+            ->addUnitsGesadmin($config->Id_Warehouse)->orderBy('UnitsGesadmin', 'desc');
 
         if (isset($rules) && $rules == "general") $Product = $Product->join(
             $WarehouseProductTable,
@@ -408,7 +408,7 @@ class ProductController extends Controller
 
         $Product = (isset($nItems) || isset($productsIDs))
             ? $Product->get()
-            : $Product->orderByDesc('001_droi_p1_t1_inventory_sele.Id')->paginate(40);
+            : $Product->paginate(40);
 
         return $Product;
     }
