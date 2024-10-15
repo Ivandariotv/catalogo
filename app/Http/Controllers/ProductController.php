@@ -66,8 +66,14 @@ class ProductController extends Controller
             "message" => $user['state'] . "."
         ]);
 
+        $Id_Warehouse = $config->Id_Warehouse;
         $Product = Product::with([
             'productImages',
+            'serials' => function ($query) use ($Id_Warehouse) {
+                $query->where('State', 'Storage')
+                    ->where('Id_Warehouse', $Id_Warehouse)
+                    ->with(['color', 'size']);
+            }
         ])->addUrlServeImage()->addUnitsGesadmin($config->Id_Warehouse);
 
         $WarehouseProductTable = '001_droi_p1_t1_warehouse_inventory';
@@ -85,8 +91,36 @@ class ProductController extends Controller
         }
 
         $Product = $Product->where('Id', $idProduct)->first();
+        $Product = BillDiscounts::getCurrentPriceProduct($Product);
 
-        return BillDiscounts::getCurrentPriceProduct($Product);
+        foreach ($Product->serials as $serial) {
+            $color_id = $serial->color ? $serial->color->id : 'N/A';
+            $color = $serial->color ? $serial->color->color : 'N/A';
+            $color_name = $serial->color ? $serial->color->name : 'N/A';
+            $size_id = $serial->size ? $serial->size->id : 'N/A';
+            $size = $serial->size ? $serial->size->sizes : 'N/A';
+            $size_name = $serial->size ? $serial->size->name : 'N/A';
+
+            $key = $color_name . '-' . $size_name;
+
+            if (!isset($results[$key])) {
+                $results[$key] = [
+                    'color_id' => $color_id,
+                    'color' => $color,
+                    'color_name' => $color_name,
+                    'size_id' => $size_id,
+                    'size' => $size,
+                    'size_name' => $size_name,
+                    'units' => 0
+                ];
+            }
+
+            $results[$key]['units']++;
+        }
+
+        $Product->color_size = $results;
+
+        return $Product;
     }
 
     /**

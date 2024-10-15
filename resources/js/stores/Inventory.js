@@ -165,28 +165,54 @@ export const useInventoryStore = defineStore("inventory", {
             });
         },
 
-        addToShoppingCart(product) {
-            if (product.UnitsGesadmin <= 0) return false;
+        addToShoppingCart(product, color, size) {
+            let units = 0;
+
+            // Buscar las unidades disponibles para el color y tamaño seleccionado
+            if (product.color_size) {
+                Object.entries(product.color_size).forEach(([key, value]) => {
+                    if (value.color_id === color.color_id && value.size_id === size.size_id) {
+                        units = value.units;
+                    }
+                });
+            }
+
+            // Si no hay unidades disponibles, no se añade el producto
+            if (units <= 0) return false;
 
             this.openShoppingCart = true;
 
-            // Buscar el producto en el carrito por su ID
-            const existingProductIndex = this.shoppingCart.findIndex(item => item.Id === product.Id);
+            // Buscar el producto en el carrito por su ID, color_id y size_id
+            const existingProductIndex = this.shoppingCart.findIndex(item =>
+                item.Id === product.Id &&
+                item.color?.color_id === color.color_id &&
+                item.size?.size_id === size.size_id
+            );
 
+            // Verifica si el producto ya existe en el carrito
             if (existingProductIndex !== -1) {
-                // Si el producto ya existe en el carrito, incrementar su cantidad de unidades
+                // Incrementar las unidades del producto existente
                 this.shoppingCart[existingProductIndex].units += 1;
             } else {
                 // Si el producto no existe en el carrito, agregarlo con una unidad
-                product.units = 1;
-                this.shoppingCart = [...this.shoppingCart, product];
+                let productNew = { ...product }; // Crear una copia del producto
+                productNew.units = 1;
+                productNew.color = color;
+                productNew.size = size;
+                this.shoppingCart = [...this.shoppingCart, productNew]; // Añadir el nuevo producto al carrito
             }
 
+            // Guardar el carrito actualizado en el localStorage
             this.saveToLocalStorage(this.shoppingCart);
         },
 
-        removeFromShoppingCart(product) {
-            const existingProductIndex = this.shoppingCart.findIndex(item => item.Id === product.Id);
+
+        removeFromShoppingCart(product, color, size) {
+            const existingProductIndex = this.shoppingCart.findIndex(item =>
+                item.Id === product.Id &&
+                item.color?.color_id === color.color_id &&
+                item.size?.size_id === size.size_id
+            );
 
             if (existingProductIndex !== -1) {
                 // Si el producto ya existe en el carrito, disminuir su cantidad de unidades
@@ -201,8 +227,12 @@ export const useInventoryStore = defineStore("inventory", {
             this.saveToLocalStorage(this.shoppingCart);
         },
 
-        removeItemFromShoppingCart(product) {
-            const existingProductIndex = this.shoppingCart.findIndex(item => item.Id === product.Id);
+        removeItemFromShoppingCart(product, color, size) {
+            const existingProductIndex = this.shoppingCart.findIndex(item =>
+                item.Id === product.Id &&
+                item.color?.color_id === color.color_id &&
+                item.size?.size_id === size.size_id
+            );
 
             if (existingProductIndex !== -1) {
                 // Si el producto ya existe en el carrito, lo elimina
@@ -239,7 +269,7 @@ quiero hacer este pedido en Agua Marina:
 
                 this.shoppingCart.forEach(product => {
                     message += `
-- ${product.units} ${product.Product} ${product.Barcode} / ${this.formatCurrency(product.Current_Price)}`;
+- ${product.units} ${product.Product} - ${product.color.color_name} (${product.size.size}) ${product.Barcode} / ${this.formatCurrency(product.Current_Price)}`;
                 });
 
                 message += `

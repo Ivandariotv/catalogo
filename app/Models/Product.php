@@ -102,6 +102,12 @@ class Product extends Model
         return $productImages;
     }
 
+    public function serials()
+    {
+        return $this->hasMany(InventorySerial::class, 'Code_Item', 'Id');
+    }
+
+
     /**
      * Get a custom query builder for the model's table.
      *
