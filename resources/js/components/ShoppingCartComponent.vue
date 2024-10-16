@@ -90,7 +90,7 @@ onMounted(() => {
                                                                     class="flex justify-between text-base font-medium text-gray-900">
                                                                     <h3 class="line-clamp-2">
                                                                         <a @click="navigateToProduct(product.Id)"
-                                                                            class="cursor-pointer">{{ product.Product + ' - ' + product.color.color_name + ' (' + product.size.size + ')' }}
+                                                                            class="cursor-pointer">{{ product.Product + ' - ' + product?.color?.color_name + ' (' + product?.size?.size + ')' }}
                                                                         </a>
                                                                     </h3>
                                                                     <div class="ml-4 grid justify-items-end">

@@ -171,7 +171,7 @@ export const useInventoryStore = defineStore("inventory", {
             // Buscar las unidades disponibles para el color y tamaño seleccionado
             if (product.color_size) {
                 Object.entries(product.color_size).forEach(([key, value]) => {
-                    if (value.color_id === color.color_id && value.size_id === size.size_id) {
+                    if (value?.color_id === color?.color_id && value?.size_id === size?.size_id) {
                         units = value.units;
                     }
                 });
@@ -185,8 +185,8 @@ export const useInventoryStore = defineStore("inventory", {
             // Buscar el producto en el carrito por su ID, color_id y size_id
             const existingProductIndex = this.shoppingCart.findIndex(item =>
                 item.Id === product.Id &&
-                item.color?.color_id === color.color_id &&
-                item.size?.size_id === size.size_id
+                item.color?.color_id === color?.color_id &&
+                item.size?.size_id === size?.size_id
             );
 
             // Verifica si el producto ya existe en el carrito
@@ -210,8 +210,8 @@ export const useInventoryStore = defineStore("inventory", {
         removeFromShoppingCart(product, color, size) {
             const existingProductIndex = this.shoppingCart.findIndex(item =>
                 item.Id === product.Id &&
-                item.color?.color_id === color.color_id &&
-                item.size?.size_id === size.size_id
+                item.color?.color_id === color?.color_id &&
+                item.size?.size_id === size?.size_id
             );
 
             if (existingProductIndex !== -1) {
@@ -230,8 +230,8 @@ export const useInventoryStore = defineStore("inventory", {
         removeItemFromShoppingCart(product, color, size) {
             const existingProductIndex = this.shoppingCart.findIndex(item =>
                 item.Id === product.Id &&
-                item.color?.color_id === color.color_id &&
-                item.size?.size_id === size.size_id
+                item.color?.color_id === color?.color_id &&
+                item.size?.size_id === size?.size_id
             );
 
             if (existingProductIndex !== -1) {

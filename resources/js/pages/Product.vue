@@ -43,8 +43,8 @@ const uniqueColors = computed(() => {
         const colorMap = new Map();
 
         Object.entries(inventoryStore.product.color_size).forEach(([i, item]) => {
-            if (!colorMap.has(item.color_id)) {
-                colorMap.set(item.color_id, { color_id: item.color_id, color: item.color, color_name: item.color_name });
+            if (!colorMap.has(item?.color_id)) {
+                colorMap.set(item?.color_id, { color_id: item?.color_id, color: item.color, color_name: item.color_name });
             }
         });
 
@@ -62,13 +62,13 @@ const uniqueSize = computed(() => {
         // Crear un Map para evitar duplicados basados en el color_name
         const colorMap = new Map();
 
-        Object.entries(inventoryStore.product.color_size).forEach(([key, item]) => {
-            if (!colorMap.has(item.size_id)) {
+        Object.entries(inventoryStore?.product?.color_size).forEach(([key, item]) => {
+            if (!colorMap.has(item?.size_id)) {
                 if ((state.color?.color_id === item?.color_id || state.color === null)) {
-                    colorMap.set(item.size_id, {
-                        size_id: item.size_id,
-                        size: item.size,
-                        size_name: item.size_name,
+                    colorMap.set(item?.size_id, {
+                        size_id: item?.size_id,
+                        size: item?.size,
+                        size_name: item?.size_name,
                         active: (state?.color?.color_id === item?.color_id || state?.size?.size_id === item?.size_id)
                     });
                 }
@@ -144,7 +144,7 @@ const uniqueSize = computed(() => {
 
                         <fieldset aria-label="Choose a color" class="mt-4">
                             <div class="flex items-center space-x-3">
-                                <label v-for="color in uniqueColors" :key="color.color_id"
+                                <label v-for="color in uniqueColors" :key="color?.color_id"
                                     :aria-label="color.color_name"
                                     class="relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5"
                                     :style="color?.color_id === state?.color?.color_id ?
@@ -167,7 +167,7 @@ const uniqueSize = computed(() => {
 
                         <fieldset aria-label="Choose a size" class="mt-4">
                             <div class="grid grid-cols-6 gap-2 sm:grid-cols-7 lg:grid-cols-8">
-                                <label v-for="size in uniqueSize" :key="size.size_id" :aria-label="size.size_name"
+                                <label v-for="size in uniqueSize" :key="size?.size_id" :aria-label="size.size_name"
                                     :class="'group relative flex items-center justify-center rounded-md border bg-white px-4 py-3 text-sm font-medium uppercase text-gray-900 ' +
                                         (size.active ? 'hover:bg-gray-50 focus:outline-none cursor-pointer' : 'cursor-not-allowed opacity-30')
                                         " :style="size?.size_id == state?.size?.size_id ?
