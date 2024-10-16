@@ -42,7 +42,7 @@ const uniqueColors = computed(() => {
         // Crear un Map para evitar duplicados basados en el color_name
         const colorMap = new Map();
 
-        Object.entries(inventoryStore.product.color_size).forEach(([key, item]) => {
+        Object.entries(inventoryStore.product.color_size).forEach(([i, item]) => {
             if (!colorMap.has(item.color_id)) {
                 colorMap.set(item.color_id, { color_id: item.color_id, color: item.color, color_name: item.color_name });
             }
@@ -64,7 +64,14 @@ const uniqueSize = computed(() => {
 
         Object.entries(inventoryStore.product.color_size).forEach(([key, item]) => {
             if (!colorMap.has(item.size_id)) {
-                colorMap.set(item.size_id, { size_id: item.size_id, size: item.size, size_name: item.size_name, active: state.color.color_id === item.color_id });
+                if ((state.color?.color_id === item?.color_id || state.color === null)) {
+                    colorMap.set(item.size_id, {
+                        size_id: item.size_id,
+                        size: item.size,
+                        size_name: item.size_name,
+                        active: (state?.color?.color_id === item?.color_id || state?.size?.size_id === item?.size_id)
+                    });
+                }
             }
         });
 
@@ -137,16 +144,15 @@ const uniqueSize = computed(() => {
 
                         <fieldset aria-label="Choose a color" class="mt-4">
                             <div class="flex items-center space-x-3">
-                                <label v-for="color in uniqueColors" :key="color.color_id" :aria-label="color.color_name"
-                                    @click="state.color = color"
+                                <label v-for="color in uniqueColors" :key="color.color_id"
+                                    :aria-label="color.color_name"
                                     class="relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5"
-                                    :style="
-                                        color.color_id === state.color.color_id ?
-                                            'border: 2px solid #00BBFF' :
-                                            'border: 2px solid transparent'
-                                    "
-                                    >
-                                    <input type="radio" name="color-choice" :value="color.color_id" class="sr-only">
+                                    :style="color?.color_id === state?.color?.color_id ?
+                                        'border: 2px solid #00BBFF' :
+                                        'border: 2px solid transparent'
+                                        ">
+                                    <input type="radio" name="color-choice" :value="color" v-model="state.color"
+                                        class="sr-only">
                                     <span aria-hidden="true"
                                         class="h-8 w-8 rounded-full border border-black border-opacity-10"
                                         :style="{ backgroundColor: color.color }"></span>
@@ -161,20 +167,17 @@ const uniqueSize = computed(() => {
 
                         <fieldset aria-label="Choose a size" class="mt-4">
                             <div class="grid grid-cols-6 gap-2 sm:grid-cols-7 lg:grid-cols-8">
-                                <label
-                                    v-for="size in uniqueSize" :key="size.size_id" :aria-label="size.size_name"
-                                    @click="size.active ? state.size = size : null"
+                                <label v-for="size in uniqueSize" :key="size.size_id" :aria-label="size.size_name"
                                     :class="'group relative flex items-center justify-center rounded-md border bg-white px-4 py-3 text-sm font-medium uppercase text-gray-900 ' +
                                         (size.active ? 'hover:bg-gray-50 focus:outline-none cursor-pointer' : 'cursor-not-allowed opacity-30')
-                                    "
-                                    :style="
-                                        size.size_id === state.size.size_id ?
+                                        " :style="size?.size_id == state?.size?.size_id ?
                                             'border: 2px solid #00BBFF' :
                                             null
-                                    ">
+                                            ">
 
-                                    <input type="radio" name="size-choice" :value="size.size_id" class="sr-only">
-                                    <span>{{size.size}}</span>
+                                    <input type="radio" name="size-choice" :value="size" v-model="state.size"
+                                        class="sr-only" :disabled="!size.active">
+                                    <span>{{ size.size }} </span>
                                     <span class="pointer-events-none absolute -inset-px rounded-md"
                                         aria-hidden="true"></span>
                                 </label>
@@ -188,7 +191,8 @@ const uniqueSize = computed(() => {
                                 'text-gray-400 border-gray-50 bg-gray-50 cursor-not-allowed' :
                                 'text-gray-900 border-gray-200 bg-white hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 cursor-pointer') +
                             ' flex items-center justify-center py-2.5 px-5 text-sm font-medium focus:outline-none rounded-lg border'"
-                            role="button" @click="inventoryStore.addToShoppingCart(inventoryStore.product, state.color, state.size)">
+                            role="button"
+                            @click="inventoryStore.addToShoppingCart(inventoryStore.product, state.color, state.size)">
                             <svg class="w-5 h-5 -ms-2 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                                 width="24" height="24" fill="none" viewBox="0 0 24 24">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
