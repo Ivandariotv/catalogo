@@ -358,9 +358,11 @@ class ProductController extends Controller
     {
         $assingWharehouse = "001_droi_p0_t2_warehouse_c1_assign";
         $configTable = "001_droi_p0_t1_config_business";
+        // obtiene BUSINESS_ID del .env
+        $businessId = env('BUSINESS_ID', 1);
 
         return Business::join($assingWharehouse, $configTable . '.Id', $assingWharehouse . '.Id_Business')
-            ->where('useOnlineStore', 1)
+            ->where($configTable . '.Id', $businessId)
             ->where('State', 'Available')
             ->first();
     }

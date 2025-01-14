@@ -14,7 +14,9 @@ class ApplicationSettingsController extends Controller
      */
     public function index()
     {
-        $business = Business::where('useOnlineStore', 1)->first();
+        // obtiene BUSINESS_ID del .env
+        $businessId = env('BUSINESS_ID', 1);
+        $business = Business::where('id', $businessId)->first();
 
         $data = [
             "payment_methods" => [
