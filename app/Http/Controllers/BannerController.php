@@ -10,12 +10,12 @@ class BannerController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $Banners = Banner::addUrlImage()->get();
+        $businessId = env('BUSINESS_ID', 1);
+        $Banners = Banner::where('business_id', $businessId)
+            ->addUrlImage()->get();
         return $Banners;
     }
 }

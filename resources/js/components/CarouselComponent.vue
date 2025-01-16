@@ -1,5 +1,5 @@
 <template>
-    <div id="animation-carousel" class="relative w-full px-3 sm:px-6 lg:px-8" data-carousel="static" ref="carousel">
+    <div id="animation-carousel" class="relative w-full px-3 sm:px-6 lg:px-8" data-carousel="static" ref="carousel" v-if="inventoryStore.banner.length > 0">
         <!-- Carousel wrapper -->
         <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
             <!-- Carousel items -->

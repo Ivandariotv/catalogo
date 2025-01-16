@@ -20,6 +20,7 @@ class Banner extends Model
     protected $hidden = [
         'Time',
         'Position',
+        'business_id',
         'Img'
     ];
 
@@ -35,10 +36,10 @@ class Banner extends Model
             public function addUrlImage(): Builder
             {
                 return $this->selectRaw(
-                    "*, 
+                    "*,
                     if(
-                        COALESCE(`Img`, '') = '', 
-                        NULL, 
+                        COALESCE(`Img`, '') = '',
+                        NULL,
                         CONCAT('" . env('ASSETS_GESADMIN') . "', '/001_droi_p3_t9_settings_adds/', `Img`)
                     ) AS  `UrlImage`"
                 );
