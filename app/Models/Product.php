@@ -121,7 +121,7 @@ class Product extends Model
             {
                 $ProductTable = '001_droi_p1_t1_inventory_sele';
                 return $this->selectRaw(
-                    "*,
+                    "001_droi_p1_t1_inventory_sele.*,
                     Price_Sugerido AS Previous_Price,
                     0.00 AS Current_Price,
                     $ProductTable.Id,
