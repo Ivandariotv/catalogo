@@ -94,9 +94,9 @@ onMounted(() => {
                                                                         </a>
                                                                     </h3>
                                                                     <div class="ml-4 grid justify-items-end">
-                                                                        {{ formatCurrency((inventoryStore.totalNumberProducts >= 3 ? product.Price_Wholesale : product.Current_Price)) }}
+                                                                        {{ formatCurrency((inventoryStore.totalNumberProducts >= 6 ? product.Price_Wholesale : product.Current_Price)) }}
                                                                         <p class="text-sm text-gray-400 line-through"
-                                                                            v-if="inventoryStore.totalNumberProducts >= 3">
+                                                                            v-if="inventoryStore.totalNumberProducts >= 6">
                                                                             {{ formatCurrency(product.Previous_Price) }}
                                                                         </p>
                                                                     </div>
