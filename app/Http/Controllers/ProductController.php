@@ -10,6 +10,7 @@ use App\Models\BillProducts;
 use App\Models\Business;
 use App\Models\historyUnits;
 use App\Services\BillDiscounts;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -416,8 +417,19 @@ class ProductController extends Controller
         $WarehouseProductTable = '001_droi_p1_t1_warehouse_inventory';
         $ProductTable = '001_droi_p1_t1_inventory_sele';
 
+        $productModel = new Product();
+
+        // Reutilizamos la subconsulta
+        $unitsSubquery = $productModel->getUnitsGesadminSubquery($config->Id_Warehouse);
+
+        $date = Carbon::now()->format('Y-m-d');
+        $seed = strtotime($date);
+
         $Product = Product::where('Code_Group', '!=', Null)->addUrlImage()
-            ->addUnitsGesadmin($config->Id_Warehouse)->orderBy('UnitsGesadmin', 'desc');
+            ->addUnitsGesadmin(Id_Warehouse: $config->Id_Warehouse)
+            ->addSelect(DB::raw("CRC32(CONCAT($seed, 001_droi_p1_t1_inventory_sele.Id)) AS random_key"))
+            ->orderByRaw("CASE WHEN $unitsSubquery > 0 THEN 0 ELSE 1 END")
+            ->orderBy('random_key');
 
         if (isset($rules) && $rules == "general") $Product = $Product->join(
             $WarehouseProductTable,

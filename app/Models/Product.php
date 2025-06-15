@@ -198,6 +198,20 @@ class Product extends Model
                     "IFNULL($subquery, 0) AS UnitsGesadmin"
                 );
             }
+
+            public function getUnitsGesadminSubquery($Id_Warehouse): string
+            {
+                $serialTable = '001_droi_p1_t2_inventory_serial';
+                $productTable = '001_droi_p1_t1_inventory_sele';
+
+                return "(
+                    SELECT COUNT(*)
+                    FROM $serialTable
+                    WHERE Code_Item = $productTable.Id
+                    AND State = 'Storage'
+                    AND Id_Warehouse = $Id_Warehouse
+                )";
+            }
         };
     }
 }
