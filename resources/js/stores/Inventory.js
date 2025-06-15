@@ -39,7 +39,7 @@ export const useInventoryStore = defineStore("inventory", {
             }, 0);
 
             // Verifica si hay al menos 3 productos
-            if (totalNumberProducts >= 3) {
+            if (totalNumberProducts >= 6) {
                 return state.shoppingCart.reduce((total, product) => {
                     return total + (product.Price_Wholesale * product.units);
                 }, 0);

@@ -118,11 +118,11 @@ const uniqueSize = computed(() => {
                     </h1>
                     <div class="mt-4 grid justify-items-start gap-1">
                         <p class="text-2xl font-extrabold text-gray-900 sm:text-3xl">
-                            {{ formatCurrency((inventoryStore.totalNumberProducts >= 3 ?
+                            {{ formatCurrency((inventoryStore.totalNumberProducts >= 6 ?
                                 inventoryStore.product.Price_Wholesale : inventoryStore.product.Current_Price)) }}
                         </p>
 
-                        <div v-if="inventoryStore.totalNumberProducts >= 3">
+                        <div v-if="inventoryStore.totalNumberProducts >= 6">
                             <p class="text-base font-semibold sm:text-xl text-gray-400 line-through">
                                 {{ formatCurrency(inventoryStore.product.Previous_Price) }}
                             </p>
